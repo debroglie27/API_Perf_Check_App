@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number of Users Vs Response Times</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+        }
+
+        .table-container {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .styled-table {
+            border-collapse: collapse;
+            font-size: 1.5em;
+            font-family: sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #009879;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Consolidated Results</h1>
+    </header>
+
+    <div class="container"> <div class="table-container"><h1 style="min-width:100%;">CPU Utilization Vs Number of Users for 100 users</h1><table class="styled-table" style="min-width: 100%;">
+                <thead>
+                    <tr><th>CPU Number</th><th>% Utilization</th></tr>
+                </thead>
+                <tbody><tr><td>all</td><td>6.76</td></tr><tr><td>0</td><td>6.26</td></tr><tr><td>1</td><td>6.44</td></tr><tr><td>2</td><td>5.23</td></tr><tr><td>3</td><td>7.84</td></tr><tr><td>4</td><td>6.67</td></tr><tr><td>5</td><td>5.94</td></tr><tr><td>6</td><td>7.4</td></tr><tr><td>7</td><td>7.16</td></tr><tr><td>8</td><td>4.97</td></tr><tr><td>9</td><td>6.53</td></tr><tr><td>10</td><td>6.36</td></tr><tr><td>11</td><td>6.9</td></tr><tr><td>12</td><td>5.76</td></tr><tr><td>13</td><td>8.23</td></tr><tr><td>14</td><td>9.4</td></tr><tr><td>15</td><td>6.2</td></tr><tr><td>16</td><td>9.4</td></tr><tr><td>17</td><td>9.3</td></tr><tr><td>18</td><td>7.31</td></tr><tr><td>19</td><td>5.98</td></tr><tr><td>20</td><td>8.23</td></tr><tr><td>21</td><td>4.84</td></tr><tr><td>22</td><td>4.52</td></tr><tr><td>23</td><td>5.26</td></tr></tbody>
+            </table> 
+        </div> <div class="table-container"><h1 style="min-width:100%;">CPU Utilization Vs Number of Users for 200 users</h1><table class="styled-table" style="min-width: 100%;">
+                <thead>
+                    <tr><th>CPU Number</th><th>% Utilization</th></tr>
+                </thead>
+                <tbody><tr><td>all</td><td>12.33</td></tr><tr><td>0</td><td>11.42</td></tr><tr><td>1</td><td>9.88</td></tr><tr><td>2</td><td>12.45</td></tr><tr><td>3</td><td>10.68</td></tr><tr><td>4</td><td>10.76</td></tr><tr><td>5</td><td>14.44</td></tr><tr><td>6</td><td>12.6</td></tr><tr><td>7</td><td>9.89</td></tr><tr><td>8</td><td>13.87</td></tr><tr><td>9</td><td>12.12</td></tr><tr><td>10</td><td>13.68</td></tr><tr><td>11</td><td>15.02</td></tr><tr><td>12</td><td>10.44</td></tr><tr><td>13</td><td>12.99</td></tr><tr><td>14</td><td>13.82</td></tr><tr><td>15</td><td>12.97</td></tr><tr><td>16</td><td>14.11</td></tr><tr><td>17</td><td>10.14</td></tr><tr><td>18</td><td>12.64</td></tr><tr><td>19</td><td>13.31</td></tr><tr><td>20</td><td>10.96</td></tr><tr><td>21</td><td>14.42</td></tr><tr><td>22</td><td>11.18</td></tr><tr><td>23</td><td>12.32</td></tr></tbody>
+            </table> 
+        </div> <div class="table-container"><h1 style="min-width:100%;">CPU Utilization Vs Number of Users for 300 users</h1><table class="styled-table" style="min-width: 100%;">
+                <thead>
+                    <tr><th>CPU Number</th><th>% Utilization</th></tr>
+                </thead>
+                <tbody><tr><td>all</td><td>16.96</td></tr><tr><td>0</td><td>18.02</td></tr><tr><td>1</td><td>16.5</td></tr><tr><td>2</td><td>15.79</td></tr><tr><td>3</td><td>18.94</td></tr><tr><td>4</td><td>12.31</td></tr><tr><td>5</td><td>16.97</td></tr><tr><td>6</td><td>16.03</td></tr><tr><td>7</td><td>19.98</td></tr><tr><td>8</td><td>16.95</td></tr><tr><td>9</td><td>13.09</td></tr><tr><td>10</td><td>16.9</td></tr><tr><td>11</td><td>18.39</td></tr><tr><td>12</td><td>14.93</td></tr><tr><td>13</td><td>20.81</td></tr><tr><td>14</td><td>19.9</td></tr><tr><td>15</td><td>17.14</td></tr><tr><td>16</td><td>20.54</td></tr><tr><td>17</td><td>14.31</td></tr><tr><td>18</td><td>17.02</td></tr><tr><td>19</td><td>15.59</td></tr><tr><td>20</td><td>16.44</td></tr><tr><td>21</td><td>17.76</td></tr><tr><td>22</td><td>16.72</td></tr><tr><td>23</td><td>16.03</td></tr></tbody>
+            </table> 
+        </div> <div class="table-container"><h1 style="min-width:100%;">CPU Utilization Vs Number of Users for 400 users</h1><table class="styled-table" style="min-width: 100%;">
+                <thead>
+                    <tr><th>CPU Number</th><th>% Utilization</th></tr>
+                </thead>
+                <tbody><tr><td>all</td><td>18.16</td></tr><tr><td>0</td><td>19.64</td></tr><tr><td>1</td><td>20.64</td></tr><tr><td>2</td><td>18.05</td></tr><tr><td>3</td><td>16.45</td></tr><tr><td>4</td><td>11.81</td></tr><tr><td>5</td><td>23.09</td></tr><tr><td>6</td><td>16.74</td></tr><tr><td>7</td><td>20.21</td></tr><tr><td>8</td><td>19.46</td></tr><tr><td>9</td><td>16.96</td></tr><tr><td>10</td><td>19.32</td></tr><tr><td>11</td><td>20.19</td></tr><tr><td>12</td><td>11.02</td></tr><tr><td>13</td><td>15.67</td></tr><tr><td>14</td><td>15.58</td></tr><tr><td>15</td><td>22.7</td></tr><tr><td>16</td><td>22.82</td></tr><tr><td>17</td><td>14.04</td></tr><tr><td>18</td><td>21.77</td></tr><tr><td>19</td><td>16.69</td></tr><tr><td>20</td><td>15.35</td></tr><tr><td>21</td><td>21.82</td></tr><tr><td>22</td><td>18.24</td></tr><tr><td>23</td><td>17.56</td></tr></tbody>
+            </table> 
+        </div> <div class="table-container"><h1 style="min-width:100%;">CPU Utilization Vs Number of Users for 500 users</h1><table class="styled-table" style="min-width: 100%;">
+                <thead>
+                    <tr><th>CPU Number</th><th>% Utilization</th></tr>
+                </thead>
+                <tbody><tr><td>all</td><td>18.6</td></tr><tr><td>0</td><td>19.6</td></tr><tr><td>1</td><td>21.04</td></tr><tr><td>2</td><td>22.85</td></tr><tr><td>3</td><td>15.85</td></tr><tr><td>4</td><td>15.18</td></tr><tr><td>5</td><td>20.38</td></tr><tr><td>6</td><td>18.87</td></tr><tr><td>7</td><td>17.96</td></tr><tr><td>8</td><td>20.13</td></tr><tr><td>9</td><td>14.88</td></tr><tr><td>10</td><td>21.34</td></tr><tr><td>11</td><td>23.22</td></tr><tr><td>12</td><td>12.13</td></tr><tr><td>13</td><td>17.41</td></tr><tr><td>14</td><td>18.57</td></tr><tr><td>15</td><td>16.23</td></tr><tr><td>16</td><td>22.57</td></tr><tr><td>17</td><td>18.39</td></tr><tr><td>18</td><td>16.59</td></tr><tr><td>19</td><td>19.33</td></tr><tr><td>20</td><td>16.14</td></tr><tr><td>21</td><td>25.83</td></tr><tr><td>22</td><td>17.66</td></tr><tr><td>23</td><td>14.08</td></tr></tbody>
+            </table> 
+        </div>
+         </div>
+      </body>
+      </html>

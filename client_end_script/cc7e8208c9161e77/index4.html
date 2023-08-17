@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolidated Reportindex3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+        }
+
+        .table-container {
+            margin: 0 auto;
+            border-collapse: collapse;
+            max-width: 100%;
+            overflow: auto;
+        }
+
+        .styled-table {
+            border-collapse: collapse;
+            font-size: 1.5em;
+            font-family: sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #009879;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CPU Utilization vs Number of Users</h1>
+    </header>
+
+    <div class="">
+        <div class="image-container"><img src=cc7e8208c9161e77cpu.png alt="Beautiful Image">
+        </div>
+
+        <div class="table-container" style="border:2px solid black;width:80%;margin:auto">
+            <table class="styled-table" >
+                <thead>
+                    <tr><th>num_of_users</th><th>all</th><th>core:0</th><th>core:1</th><th>core:2</th><th>core:3</th><th>core:4</th><th>core:5</th><th>core:6</th><th>core:7</th><th>core:8</th><th>core:9</th><th>core:10</th><th>core:11</th><th>core:12</th><th>core:13</th><th>core:14</th><th>core:15</th><th>core:16</th><th>core:17</th><th>core:18</th><th>core:19</th><th>core:20</th><th>core:21</th><th>core:22</th><th>core:23</th></tr>
+                </thead>
+                <tbody><tr><td>600</td><td>32.47</td><td>31.93</td><td>33.15</td><td>32.22</td><td>32.65</td><td>32.01</td><td>32.5</td><td>32.06</td><td>32.55</td><td>33.24</td><td>32.43</td><td>32.22</td><td>32.22</td><td>31.9</td><td>33.25</td><td>33.11</td><td>32.78</td><td>32.44</td><td>32.27</td><td>32.63</td><td>32.13</td><td>32.45</td><td>33.53</td><td>31.95</td><td>31.68</td></tr><tr><td>700</td><td>30.45</td><td>30.19</td><td>30.81</td><td>30.55</td><td>31.13</td><td>29.23</td><td>30.49</td><td>29.93</td><td>31.1</td><td>31.85</td><td>28.62</td><td>30.23</td><td>30.17</td><td>29.23</td><td>30.72</td><td>30.87</td><td>31.76</td><td>30.72</td><td>29.88</td><td>31.07</td><td>29.53</td><td>31.7</td><td>30.85</td><td>30.15</td><td>30.13</td></tr><tr><td>800</td><td>41.15</td><td>41.66</td><td>40.76</td><td>41.7</td><td>41.11</td><td>40.43</td><td>42.46</td><td>40.08</td><td>41.14</td><td>41.42</td><td>40.05</td><td>40.92</td><td>42.04</td><td>40.18</td><td>41.43</td><td>41.91</td><td>42.0</td><td>41.99</td><td>40.63</td><td>41.1</td><td>40.88</td><td>41.11</td><td>41.94</td><td>39.92</td><td>40.61</td></tr><tr><td>900</td><td>15.97</td><td>16.77</td><td>16.33</td><td>16.27</td><td>16.58</td><td>15.27</td><td>16.07</td><td>15.6</td><td>15.52</td><td>16.44</td><td>15.56</td><td>16.2</td><td>16.0</td><td>15.16</td><td>15.97</td><td>18.27</td><td>15.48</td><td>16.02</td><td>16.0</td><td>16.35</td><td>15.36</td><td>15.96</td><td>15.28</td><td>14.99</td><td>15.84</td></tr><tr><td>1000</td><td>46.99</td><td>47.72</td><td>47.69</td><td>47.82</td><td>47.87</td><td>46.78</td><td>47.0</td><td>45.76</td><td>48.11</td><td>47.52</td><td>45.03</td><td>47.37</td><td>46.84</td><td>46.74</td><td>47.53</td><td>46.92</td><td>47.01</td><td>47.44</td><td>45.8</td><td>46.33</td><td>46.8</td><td>47.68</td><td>47.14</td><td>45.62</td><td>47.28</td></tr>
+                </tbody>
+            </table> 
+    </div>
+         </div>
+      </body>
+      </html>
