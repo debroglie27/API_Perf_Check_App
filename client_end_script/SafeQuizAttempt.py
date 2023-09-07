@@ -1,6 +1,3 @@
-from locust import HttpUser,SequentialTaskSet,task,constant,events
-from locust.exception import StopUser
-from client_end_script_helper import test_host,read_config
 from credentials import *
 from Answers import *
 from CourseCode import coursecode
@@ -8,11 +5,9 @@ from TestName import quizid
 from locust import HttpUser,SequentialTaskSet,task,constant,log
 import re
 import datetime
-# from locust.exception import StopUser
+from locust.exception import StopUser
 
-test_id,num_user=read_config()
-# url = "sys_perf_check/"+test_id+"/"+num_user+"/"
-class PerfCheck(SequentialTaskSet):
+class SafeLogin(SequentialTaskSet):
     def __init__(self,parent):
         super().__init__(parent)
         self.codeid = quizid
@@ -91,20 +86,8 @@ class PerfCheck(SequentialTaskSet):
     def on_stop(self):
         raise StopUser()
 
-    # @task
-    # def perf_check(self):
-    #     url = "sys_perf_check/"+test_id+"/"+num_user+"/"
-    #     print(url)
-    #     # with self.client.get(url,name="perf_check",catch_response=True,verify=False) as response:
-    #     with self.client.get(url,name="perf_check",catch_response=True,verify=False) as response:
-    #         print("perf_check:",response.text)
-            
-            
-
-
 class MySeqTest(HttpUser):
-    # fixed_count=1
     wait_time=constant(1)
-    host =test_host
-    tasks = [PerfCheck]
-
+    host ="https://safev2.cse.iitb.ac.in/"
+    # host ="http://0.0.0.0:8080/"
+    tasks = [SafeLogin]

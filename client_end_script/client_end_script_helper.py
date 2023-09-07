@@ -417,3 +417,7 @@ def showgui(test_id):
     canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(int(-1 * (event.delta / 120)), "units"))
 
     window.mainloop()
+
+def constructor_script():
+    constructor=["python3","initial_script.py"]
+    subprocess.run(constructor)

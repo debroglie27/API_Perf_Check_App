@@ -1,2 +1,0 @@
-Method,Name,Error,Occurrences
-GET,perf_check,"gaierror(-3, 'Temporary failure in name resolution')",120
