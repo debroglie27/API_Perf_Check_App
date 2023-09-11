@@ -31,6 +31,51 @@ def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
+def extractLogsNew(testName,numExtract):
+    # to extract logs based on locations from components.json
+    if os.path.isdir("logs") == False:
+        os.makedirs("logs")
+    if os.path.isdir("logs/"+testName) == False:
+        os.makedirs("logs/"+testName)
+    json_file=open(componentsFileName,"r")
+    components=json.load(json_file)
+    json_file.close()
+    direc="logs/"+testName+"/"
+    print(components)
+    for component in components:
+        # storing numExtract log lines in a temp file
+        temp_file_name=".temp"
+        file_name=component["componentName"]+"-"+testName+".log"
+        command = ["tail","-n",str(numExtract),component["logPath"]]
+        tempfd=open(temp_file_name,"w+")
+        proc1=subprocess.run(command,stdout=tempfd)
+        tempfd.close()
+
+        # getting from line number 
+        command = f"cat {temp_file_name} | grep -n START | tail -n 1 | awk -F':' '{{print $1}}'"  # Example command, replace with your desired command
+        output = subprocess.check_output(command, shell=True, universal_newlines=True)
+        from_line = output.strip()
+
+        # getting to line number 
+        command = f"cat {temp_file_name} | grep -n END | tail -n 1 | awk -F':' '{{print $1}}'"  # Example command, replace with your desired command
+        output = subprocess.check_output(command, shell=True, universal_newlines=True)
+        to_line = output.strip()
+
+        # writing relevant log files
+        command = ["sed","-n",f"{from_line},{to_line}p"]
+        fd = open(direc+file_name,"w+")
+        tempfd=open(temp_file_name,"r+")
+        proc = subprocess.run(command,stdin=tempfd,stdout=fd)
+        tempfd.close()
+        fd.close()
+    os.chdir("logs")
+    tarfileName=testName+".tar.gz"
+    make_tarfile(tarfileName,testName)
+    os.chdir("..")
+    shutil.copy('logs/'+tarfileName,'public')
+    data="ExtractionComplete"
+    return data
+
 def extractLogs(testName,numExtract):
     # to extract logs based on locations from components.json
     if os.path.isdir("logs") == False:
@@ -90,7 +135,7 @@ def serverLogExtraction():
                 FTPthread()
             print("TestName:",msg_lst[1])
             print("numLinesExtract:",msg_lst[2])
-            data = extractLogs(msg_lst[1],msg_lst[2])
+            data = extractLogsNew(msg_lst[1],msg_lst[2])
             print(data)
             conn.send(data.encode()) 
 
