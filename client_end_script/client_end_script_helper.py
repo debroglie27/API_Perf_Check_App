@@ -148,8 +148,9 @@ def command_line_args():
     parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
     args = parser.parse_args()
     return args.l,args.u,args.s,args.t
+
 def get_server_logs(test_id):
-    num_lines_extract=200000 # change this in the future
+    num_lines_extract=200000 # change this in the future based upon need
     client_run(test_id,log_host,num_lines_extract)
     extract_file = str(test_id)+ ".tar.gz"
     subprocess.run(["tar","-xvzf",extract_file])
