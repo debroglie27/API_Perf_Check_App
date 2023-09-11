@@ -1,4 +1,4 @@
-import os,json,metrohash,subprocess,argparse,csv,re,socket,csv,tkinter as tk
+import os,json,metrohash,subprocess,argparse,csv,re,socket,csv,tkinter as tk,requests
 from datetime import datetime
 from ftplib import FTP
 from configparser import ConfigParser
@@ -76,8 +76,9 @@ def extract_data(test_id):
         extract_time(id_pattern,file[0],file[1])
 
 def generate_test_id():
-    hash_input=str(datetime.now()).encode('utf-8')
-    test_id=str(metrohash.metrohash64(hash_input).hex())
+    now=datetime.now()
+    custom_format = "%Y-%m-%d_%H-%M-%S"
+    test_id = now.strftime(custom_format)
     return test_id
 
 def create_test_directory(test_id):
@@ -107,7 +108,12 @@ def get_cpu_files(lower,upper,step):
             f.close()
     os.chdir("..")
 
+def sys_perf_check(test_id,msg="",num_user=0):
+    url = test_host + f"sys_perf_check/{test_id}-{msg}/{num_user}/"
+    requests.get(url)
+
 def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
+    sys_perf_check(test_id,"START")
     for num_user in range(lower_bound,upper_bound+1,step_size):
         write_config(test_id,num_user)
         rate=ceil(num_user*0.2)
@@ -117,7 +123,10 @@ def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
         locust_cmd=["locust","-f","./perfcheck.py",\
             "--headless","-u",f"{num_user}","-r",f"{rate}","-t",f"{time}",\
                 "--csv-full-history",f"--csv={test_id}/{num_user}"]
+        sys_perf_check(test_id,"start",num_user)
         subprocess.run(locust_cmd)
+        sys_perf_check(test_id,"end",num_user)
+    sys_perf_check(test_id,"END")
     subprocess.run(["rm","test.ini"])
     os.chdir(f"./{test_id}")
     message=["start_http"]

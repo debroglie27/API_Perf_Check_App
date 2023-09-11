@@ -19,9 +19,7 @@ from maingui import(
 if __name__ == '__main__':
     lower_bound, upper_bound, step_size, run_time = command_line_args()
     test_id = generate_test_id()
-    # x = input()
     constructor_script()
-    # x = input()
     create_test_directory(test_id)
     performance_test(lower_bound, upper_bound, step_size, run_time, test_id)
     get_server_logs(test_id)
