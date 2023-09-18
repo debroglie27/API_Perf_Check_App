@@ -60,18 +60,33 @@ def generate_utilization_csv(low,upper,step):
     for row in write_lst:
         print(row)
 
+def extract_api_specific_logs(filename,dirname):
+    f = open('APIs.json')
+    api_info = json.load(f)
+    f.close()
+    os.mkdir(dirname)
+    for api in api_info:
+        command = f"cat {filename} | grep {api['searchTerm']} > {dirname}/{api['APIName']}.logs"
+        subprocess.run(command,shell=True)
 
 def extract_data(test_id):
     os.chdir(str(test_id))
-    file_lst=[]
     f = open('components.json')
-    data = json.load(f)
-    for i in data:
-        print(i["componentName"]+"-"+test_id+".log")
-        res=i["componentName"]+"-"+test_id+".log"
-        file_lst.append([res,i["timeUnit"]])
+    components_info = json.load(f)
     f.close()
+    for item in components_info:
+        filename=item["componentName"]+"-"+test_id+".log"
+        dirname=item["componentName"]+"-"+test_id
+        extract_api_specific_logs(filename,dirname)
+
+    ### deba iske aage tu bana
+    file_lst=[]
+    for item in components_info:
+        print(item["componentName"]+"-"+test_id+".log")
+        res=item["componentName"]+"-"+test_id+".log"
+        file_lst.append([res,item["timeUnit"]])
     for file in file_lst:
+        print(file)
         id_pattern=test_id
         extract_time(id_pattern,file[0],file[1])
 
@@ -95,7 +110,7 @@ def get_cpu_files(lower,upper,step):
         file_address="http://"+CPU_HOST+":"+HTTP_PORT+"/"+file_name
         get_file=["curl",file_address]
         response = subprocess.run(get_file,capture_output=True,text=True)
-        print("hit")
+        print("hit")    
         if(response.returncode !=0 ):
             print(get_file)
             print(response.stderr)
@@ -155,6 +170,7 @@ def get_server_logs(test_id):
     extract_file = str(test_id)+ ".tar.gz"
     subprocess.run(["tar","-xvzf",extract_file])
     subprocess.run(['cp','components.json',test_id])
+    subprocess.run(['cp','APIs.json',test_id])
 
 def write_config(test_id,num_users):
     config=ConfigParser()
