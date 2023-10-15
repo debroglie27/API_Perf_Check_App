@@ -8,6 +8,8 @@ from tkinter import ttk
 from PIL import ImageTk, Image
 from math import ceil
 from time import sleep
+import numpy as np
+
 
 log_host="10.129.7.11"
 test_host="https://safev2.cse.iitb.ac.in/"
@@ -78,8 +80,9 @@ def extract_data(test_id):
         filename=item["componentName"]+"-"+test_id+".log"
         dirname=item["componentName"]+"-"+test_id
         extract_api_specific_logs(filename,dirname)
-
+    
     ### deba iske aage tu bana
+    print(os.getcwd())
     file_lst=[]
     for item in components_info:
         print(item["componentName"]+"-"+test_id+".log")
@@ -89,6 +92,88 @@ def extract_data(test_id):
         print(file)
         id_pattern=test_id
         extract_time(id_pattern,file[0],file[1])
+        
+        
+        
+        
+        
+def extract_historical_data(test_id):
+    os.chdir(str(test_id))
+    f = open('components.json')
+    components_info = json.load(f)
+    f.close()
+    timeUnit=""
+    tarchdir=""
+    count=0
+    for item in components_info:
+        filename=item["componentName"]+"-"+test_id+".log"
+        dirname=item["componentName"]+"-"+test_id
+        if (count==0):     
+            tarchdir=dirname=item["componentName"]+"-"+test_id
+            timeUnit=item["timeUnit"]
+        count+=1
+        extract_api_specific_logs(filename,dirname)
+    print(os.getcwd())
+    print(tarchdir)
+    print(timeUnit)
+    f = open('APIs.json')
+    api_info = json.load(f)
+    f.close()
+    apilist=[]
+    for item in api_info:
+        filename=item["APIName"]
+        # +".logs"
+        apilist.append(filename)
+    # timeUnit="s"
+    # print(os.getcwd())
+    os.chdir(tarchdir)
+    print(os.getcwd())
+    head=['Date-time','Apiname','Mean','Standard-deviation']
+    data=[]
+    for filename in apilist:
+        response_time_pattern = re.compile("\*\*\*.*\*\*\*")
+        responsetime=[]
+        tempname=filename
+        filename=filename+".logs"
+        with open(filename) as file_h:
+            for line in file_h:
+                try:
+                    response_time=float(response_time_pattern.search(line).group(0)[3:][:-3])
+                    if (timeUnit=="s"):
+                        responsetime.append(response_time*1000)
+                except AttributeError :
+                    if response_time == None:
+                        print("AttributeError")
+                        exit(1)
+        mean = np.mean(responsetime)
+        mean=round(mean, 2)
+        std_dev = np.std(responsetime)
+        std_dev=round(std_dev, 2)
+        data.append([test_id,tempname,str(mean),str(std_dev)])
+        # print(mean)
+        # print(std_dev)
+    os.chdir('../..')
+    outfile="results.csv"
+    if not os.path.exists(outfile):
+        with open(outfile, 'w') as csvfile:
+            csvwriter = csv.writer(csvfile) 
+            csvwriter.writerow(head) 
+            csvwriter.writerows(data)
+    else: 
+        with open(outfile, 'a') as csvfile: 
+            csvwriter = csv.writer(csvfile) 
+            # csvwriter.writerow(head) 
+            csvwriter.writerows(data)
+    print("datawrite completed")
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 def generate_test_id():
     now=datetime.now()

@@ -6,6 +6,7 @@ from client_end_script_helper import (
     performance_test,
     get_server_logs,
     extract_data,
+    extract_historical_data,
     showGraph,
     constructor_script
 )
@@ -23,8 +24,9 @@ if __name__ == '__main__':
     create_test_directory(test_id)
     performance_test(lower_bound, upper_bound, step_size, run_time, test_id)
     get_server_logs(test_id)
-    extract_data(test_id)
-    showGraph(test_id)
-    plotcpu(test_id)
-    showgui(test_id)
+    extract_historical_data(test_id)
+    # extract_data(test_id)
+    # showGraph(test_id)
+    # plotcpu(test_id)
+    # showgui(test_id)
     
