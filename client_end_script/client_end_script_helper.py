@@ -9,12 +9,14 @@ from PIL import ImageTk, Image
 from math import ceil
 from time import sleep
 import numpy as np
+import sqlite3
 
 
 log_host="10.129.7.11"
 test_host="https://safev2.cse.iitb.ac.in/"
 CPU_HOST ="10.129.7.11"
 HTTP_PORT="5002"
+DB_FILE = "testdates.db"
 
 def get_util_list(num):
     lst=[]
@@ -63,10 +65,10 @@ def generate_utilization_csv(low,upper,step):
         print(row)
 
 def extract_api_specific_logs(filename,dirname):
-    f = open('APIs.json')
-    api_info = json.load(f)
-    f.close()
-    os.mkdir(dirname)
+    with open('APIs.json','r') as f:
+        api_info = json.load(f)
+    if not os.path.exists(dirname):
+        os.mkdir(dirname)
     for api in api_info:
         command = f"cat {filename} | grep {api['searchTerm']} > {dirname}/{api['APIName']}.logs"
         subprocess.run(command,shell=True)
@@ -95,13 +97,78 @@ def extract_data(test_id):
         
         
         
-        
-        
+def set_up_db():
+    if os.path.exists(DB_FILE):
+        print(f"Database {DB_FILE} already exists")
+        return
+    print(f"Creating Database {DB_FILE}")
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS test (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        time DATETIME
+    ) 
+    ''')
+    conn.commit()
+    conn.close()
+    pass
+
+def get_auto_test_id():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''
+    select seq from sqlite_sequence 
+    ''')
+    val = cursor.fetchall()
+    res=1
+    if len(val)>0:
+        res = val[0][0]+1
+    conn.commit()
+    conn.close()
+    return res
+
+def write_to_csv(test_id,api,path,response_time_lst):
+    test_id=str(test_id)
+    filename=test_id+"_"+api
+    # Define the file path
+    file_path = path +"/"+filename+".csv"
+
+    # Open the CSV file in write mode
+    with open(file_path, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        # Write the lst to the CSV file
+        for num in response_time_lst:
+            writer.writerow([num])
+
+def test_id_to_time(test_id):
+    test_id = test_id.split("_")
+    _date = test_id[0]
+    _time = test_id[1]
+    _time = ':'.join(_time.split('-'))
+    test_id=[_date,_time]
+    test_id = " ".join(test_id)
+    return test_id
+
+def insert_test_in_db(test_id):
+    test_id = test_id_to_time(test_id)
+    conn = sqlite3.connect(DB_FILE)
+    print(test_id)
+    cursor = conn.cursor()
+    query = "INSERT INTO test(time) VALUES ('" + test_id +"')"
+    cursor.execute(query)
+    conn.commit()
+    conn.close()
+
 def extract_historical_data(test_id):
+    set_up_db()
+    db_test_id = get_auto_test_id()
+    base_dir=os.getcwd()
+    log_data_dir = base_dir+"/logs/resp_time"
+    subprocess.run(f"mkdir -p {log_data_dir}",shell=True)
     os.chdir(str(test_id))
-    f = open('components.json')
-    components_info = json.load(f)
-    f.close()
+    with open('components.json','r') as f:
+        components_info = json.load(f)
     timeUnit=""
     tarchdir=""
     count=0
@@ -113,23 +180,19 @@ def extract_historical_data(test_id):
             timeUnit=item["timeUnit"]
         count+=1
         extract_api_specific_logs(filename,dirname)
-    print(os.getcwd())
-    print(tarchdir)
-    print(timeUnit)
-    f = open('APIs.json')
-    api_info = json.load(f)
-    f.close()
+
+    with open('APIs.json','r') as f:
+        api_info = json.load(f)
     apilist=[]
     for item in api_info:
         filename=item["APIName"]
-        # +".logs"
         apilist.append(filename)
-    # timeUnit="s"
-    # print(os.getcwd())
+    
     os.chdir(tarchdir)
-    print(os.getcwd())
     head=['Date-time','Apiname','Mean','Standard-deviation']
+    # print(head)
     data=[]
+    # curr_test_id = get_test_id()
     for filename in apilist:
         response_time_pattern = re.compile("\*\*\*.*\*\*\*")
         responsetime=[]
@@ -145,6 +208,7 @@ def extract_historical_data(test_id):
                     if response_time == None:
                         print("AttributeError")
                         exit(1)
+        write_to_csv(db_test_id,tempname,log_data_dir,responsetime)
         mean = np.mean(responsetime)
         mean=round(mean, 2)
         std_dev = np.std(responsetime)
@@ -153,6 +217,7 @@ def extract_historical_data(test_id):
         # print(mean)
         # print(std_dev)
     os.chdir('../..')
+    insert_test_in_db(test_id)
     outfile="results.csv"
     if not os.path.exists(outfile):
         with open(outfile, 'w') as csvfile:
@@ -165,14 +230,6 @@ def extract_historical_data(test_id):
             # csvwriter.writerow(head) 
             csvwriter.writerows(data)
     print("datawrite completed")
-    
-    
-    
-    
-    
-    
-    
-    
     
 
 def generate_test_id():
@@ -210,13 +267,13 @@ def get_cpu_files(lower,upper,step):
 
 def sys_perf_check(test_id,msg="",num_user=0):
     url = test_host + f"sys_perf_check/{test_id}-{msg}/{num_user}/"
-    requests.get(url)
+    requests.get(url,verify=False)
 
 def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
     sys_perf_check(test_id,"START")
     for num_user in range(lower_bound,upper_bound+1,step_size):
         write_config(test_id,num_user)
-        rate=ceil(num_user*0.2)
+        rate=ceil(num_user*0.01)
         time=run_time #seconds
         message=["MeasureCPU",str(time),str(num_user)]
         send_client_status_no_receive(CPU_HOST,message)
