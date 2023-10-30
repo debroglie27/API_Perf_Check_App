@@ -10,6 +10,8 @@ from math import ceil
 from time import sleep
 import numpy as np
 import sqlite3
+import scipy.stats as stats
+from colorama import Fore, Style
 
 
 log_host="10.129.7.11"
@@ -17,6 +19,7 @@ test_host="https://safev2.cse.iitb.ac.in/"
 CPU_HOST ="10.129.7.11"
 HTTP_PORT="5002"
 DB_FILE = "testdates.db"
+compare_with_prev_entries= (1,7,30)
 
 def get_util_list(num):
     lst=[]
@@ -112,7 +115,6 @@ def set_up_db():
     ''')
     conn.commit()
     conn.close()
-    pass
 
 def get_auto_test_id():
     conn = sqlite3.connect(DB_FILE)
@@ -141,6 +143,81 @@ def write_to_csv(test_id,api,path,response_time_lst):
         for num in response_time_lst:
             writer.writerow([num])
 
+def read_from_csv(test_id,api,path):
+    test_id=str(test_id)
+    response_time_lst=[]
+    filename=test_id+"_"+api
+    file_path = path +"/"+filename + ".csv"
+
+    # Open the CSV file in read mode
+    try:
+        with open(file_path, mode='r') as file:
+            reader = csv.reader(file)
+            # Iterate through the rows and convert each value to a float
+            for row in reader:
+                response_time_lst.append(float(row[0]))
+    except FileNotFoundError:
+        return response_time_lst
+    return response_time_lst
+
+def print_performance(code):
+    if code == "1":
+        print(f"{Fore.LIGHTBLACK_EX}{Style.BRIGHT}.{Style.RESET_ALL}",end='')
+    elif code == "2":
+        print(f"{Fore.RED}{Style.BRIGHT}-{Style.RESET_ALL}",end='')
+    elif code == "3":
+        print(f"{Fore.GREEN}{Style.BRIGHT}+{Style.RESET_ALL}",end='')
+    elif code == "4":
+        print(f"{Fore.LIGHTBLACK_EX}{Style.BRIGHT}={Style.RESET_ALL}",end='')
+
+def t_test_result(curr_lst,old_lst):
+    """
+        1 - comparison not possible as old data does not exist
+        2 - Performance decreased compared to prev entry
+        3 - Performance improved compared to prev entry
+        4 - Almost similar Performance . We can not reject the null hypothesis
+    """
+    if len(old_lst) == 0:
+        return "1"
+    if len(curr_lst) == 0:
+        raise ValueError("Response time for current test not generated")
+    t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
+    alpha = 0.05
+    if p_val >=alpha:
+        return "4"
+    if t_stats <= 0:
+        return "3"
+    return "2"
+
+def generate_t_test_results(db_test_id,log_path):
+    headers= ["API Name","Avg. Resp Time","std deviation"]
+    for val in compare_with_prev_entries:
+        headers.append("-"+str(val)+" D")
+    res = []
+    res.append(headers)
+
+    with open('APIs.json','r') as f:
+        api_info = json.load(f)
+    apilist=[]
+    for item in api_info:
+        filename=item["APIName"]
+        apilist.append(filename)
+    for apiname in apilist:
+        api_info=[]
+        api_rt_lst = read_from_csv(db_test_id,apiname,log_path) # response time
+        api_mean = round(np.mean(api_rt_lst),2)
+        api_std_dev = round(np.std(api_rt_lst),2)
+        api_info.append(apiname)
+        api_info.append(str(api_mean))
+        api_info.append(str(api_std_dev))
+        for val in compare_with_prev_entries:
+            prev_id = db_test_id-val
+            prev_rt_lst = read_from_csv(prev_id,apiname,log_path)
+            t_res=t_test_result(api_rt_lst,prev_rt_lst)
+            api_info.append(str(t_res))
+        res.append(api_info)
+    return res
+
 def test_id_to_time(test_id):
     test_id = test_id.split("_")
     _date = test_id[0]
@@ -159,6 +236,34 @@ def insert_test_in_db(test_id):
     cursor.execute(query)
     conn.commit()
     conn.close()
+
+def print_test_results(result):
+    max_len_each_col=[]
+    for col in range(len(result[0])):
+        max_col_len=0
+        for row in range(len(result)):
+            max_col_len=max(max_col_len,len(result[row][col]))
+        max_len_each_col.append(max_col_len)
+
+    for row in range(len(result)):
+        for col in range(len(result[0])):
+            if row ==0 or col < 3:
+                if col < len(result[0])-1:
+                    print("| "+result[row][col]+
+                        " "*(max_len_each_col[col]-len(result[row][col])),end=" ")
+                else:
+                    print("| "+result[row][col]+
+                        " "*(max_len_each_col[col]-len(result[row][col]))+" |")
+            else:
+                if col < len(result[0])-1:
+                    print("| ",end="")
+                    print_performance(result[row][col])
+                    print(" "*(max_len_each_col[col]-len(result[row][col])),end=" ")
+                else:
+                    print("| ",end="")
+                    print_performance(result[row][col])
+                    print(" "*(max_len_each_col[col]-len(result[row][col]))+" |")
+
 
 def extract_historical_data(test_id):
     set_up_db()
@@ -218,6 +323,8 @@ def extract_historical_data(test_id):
         # print(std_dev)
     os.chdir('../..')
     insert_test_in_db(test_id)
+    result = generate_t_test_results(db_test_id,log_data_dir)
+    print_test_results(result)
     outfile="results.csv"
     if not os.path.exists(outfile):
         with open(outfile, 'w') as csvfile:
