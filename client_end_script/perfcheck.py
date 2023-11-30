@@ -27,14 +27,14 @@ class PerfCheck(SequentialTaskSet):
         data={
             "email_id":self.email,"passcode":self.password
         }
-        with self.client.post(url,name="1.login",data=data,catch_response=True) as response:
+        with self.client.post(url,name="1.login",data=data,catch_response=True,verify=False) as response:
             print("login:",response)
             self.csrftoken = response.cookies['csrftoken']
 
     @task
     def course_list(self):
         url ="api/course/"
-        with self.client.get(url,name="2.course_list",catch_response=True) as response:
+        with self.client.get(url,name="2.course_list",catch_response=True,verify=False) as response:
             # print("course_list:",response.text)
             print("course_list:",response)
             self.code = coursecode
@@ -43,14 +43,14 @@ class PerfCheck(SequentialTaskSet):
     @task
     def quiz_list(self):
         url = "api/quiz/"+ self.code + "/downloadable-quizzes/"
-        with self.client.get(url,name="3.quiz_list",catch_response=True) as response:
+        with self.client.get(url,name="3.quiz_list",catch_response=True,verify=False) as response:
             # print("quiz_list:",response.text)
             print("quiz_list:",response)
 
     @task
     def quiz_info(self):
         url = "api/quiz/"+ self.codeid + "/info/"
-        with self.client.get(url,name="4.quiz_info",catch_response=True) as response:
+        with self.client.get(url,name="4.quiz_info",catch_response=True,verify=False) as response:
             quiz_keystate = re.search(r"\"keystate\":(.*?)(,|})",response.text)
             self.quiz_keystate= quiz_keystate.group(1)[1:-1] #.encode('ascii')
             print("quiz_keystate:",self.quiz_keystate)
@@ -58,13 +58,13 @@ class PerfCheck(SequentialTaskSet):
     @task
     def quiz_download(self):
         url = "api/quiz/"+ self.codeid + "/download/"
-        with self.client.get(url,name="5.quiz_download",catch_response=True) as response:
+        with self.client.get(url,name="5.quiz_download",catch_response=True,verify=False) as response:
             print("quiz_download:",response)
 
     @task
     def quiz_authenticate(self):
         url = "api/quiz/"+ self.codeid + "/authenticate/"
-        with self.client.get(url,name="6.quiz_authenticate",catch_response=True) as response:
+        with self.client.get(url,name="6.quiz_authenticate",catch_response=True,verify=False) as response:
             print("quiz_authenticate:",response)
 
     ## @task
@@ -83,7 +83,7 @@ class PerfCheck(SequentialTaskSet):
             data ={
                 "quizData":answers,"submissionTime":datetime.datetime.now().strftime(datetime_format),"seconds_since_mark":"0"
             }
-            with self.client.post(url,name="7.quiz_submit",json=data,headers={"X-CSRFToken": self.csrftoken},catch_response=True) as response:
+            with self.client.post(url,name="7.quiz_submit",json=data,headers={"X-CSRFToken": self.csrftoken},catch_response=True,verify=False) as response:
                 print("quiz_submit:",response)
                 print("quiz_submit:",response.text)
 

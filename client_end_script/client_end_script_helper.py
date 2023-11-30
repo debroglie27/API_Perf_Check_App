@@ -190,6 +190,7 @@ def t_test_result(curr_lst,old_lst):
     return "2"
 
 def generate_t_test_results(db_test_id,log_path):
+    print(db_test_id)
     headers= ["API Name","Avg. Resp Time","std deviation"]
     for val in compare_with_prev_entries:
         headers.append("-"+str(val)+" D")
@@ -322,6 +323,7 @@ def extract_historical_data(test_id):
         # print(mean)
         # print(std_dev)
     os.chdir('../..')
+    print(test_id)
     insert_test_in_db(test_id)
     result = generate_t_test_results(db_test_id,log_data_dir)
     print_test_results(result)
