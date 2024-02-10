@@ -56,7 +56,7 @@ def login_and_publish_quiz():
         "csrfmiddlewaretoken": csrf_token,
     }
     quiz_id = publish_response['id']
-    print(quiz_id)
+    print("id",quiz_id)
     start_quiz_url = host + f"/web_api/quiz/instance/{quiz_id}/start/" 
     start_quiz_response = session.post(start_quiz_url,data=publish_data)
     print(start_quiz_response.text)

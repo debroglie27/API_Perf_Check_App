@@ -182,15 +182,15 @@ def t_test_result(curr_lst,old_lst):
     if len(curr_lst) == 0:
         raise ValueError("Response time for current test not generated")
     t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
-    alpha = 0.05
+    # t_stats,p_val = stats.mannwhitneyu(old_lst,curr_lst)
+    alpha = 0.01
     if p_val >=alpha:
         return "4"
     if t_stats <= 0:
-        return "3"
-    return "2"
+        return "2"
+    return "3"
 
 def generate_t_test_results(db_test_id,log_path):
-    print(db_test_id)
     headers= ["API Name","Avg. Resp Time","std deviation"]
     for val in compare_with_prev_entries:
         headers.append("-"+str(val)+" D")
@@ -376,19 +376,22 @@ def get_cpu_files(lower,upper,step):
 
 def sys_perf_check(test_id,msg="",num_user=0):
     url = test_host + f"sys_perf_check/{test_id}-{msg}/{num_user}/"
-    requests.get(url,verify=False)
+    requests.get(url)
 
 def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
     sys_perf_check(test_id,"START")
     for num_user in range(lower_bound,upper_bound+1,step_size):
         write_config(test_id,num_user)
-        rate=ceil(num_user*0.01)
+        rate=ceil(num_user*0.02)
         time=run_time #seconds
         message=["MeasureCPU",str(time),str(num_user)]
         send_client_status_no_receive(CPU_HOST,message)
         locust_cmd=["locust","-f","./perfcheck.py",\
             "--headless","-u",f"{num_user}","-r",f"{rate}","-t",f"{time}",\
                 "--csv-full-history",f"--csv={test_id}/{num_user}"]
+        print("*"*30)
+        print(locust_cmd)
+        print("*"*30)
         sys_perf_check(test_id,"start",num_user)
         subprocess.run(locust_cmd)
         sys_perf_check(test_id,"end",num_user)
@@ -414,6 +417,13 @@ def command_line_args():
     parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
     args = parser.parse_args()
     return args.l,args.u,args.s,args.t
+def command_line_args_apc():
+    parser = argparse.ArgumentParser(prog='./client_end_script.py',\
+    description='To monitor performance of APIs over time')
+    parser.add_argument('-l',metavar="NUMBER_OF_USERS",required=True,type=int,help='Specify the number of users in the performance test')
+    parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
+    args = parser.parse_args()
+    return args.l,args.t
 
 def get_server_logs(test_id):
     num_lines_extract=200000 # change this in the future based upon need
@@ -698,3 +708,6 @@ def showgui(test_id):
 def constructor_script():
     constructor=["python3","initial_script.py"]
     subprocess.run(constructor)
+
+if __name__ == "__main__":
+    pass
