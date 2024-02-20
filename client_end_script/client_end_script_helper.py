@@ -12,14 +12,16 @@ import numpy as np
 import sqlite3
 import scipy.stats as stats
 from colorama import Fore, Style
-
+from scipy.stats import mannwhitneyu
+import numpy as np
+from scipy import stats
 
 log_host="10.129.7.11"
 test_host="https://safev2.cse.iitb.ac.in/"
 CPU_HOST ="10.129.7.11"
 HTTP_PORT="5002"
 DB_FILE = "testdates.db"
-COMPARE_WITH_PREV_ENTRIES= (1,7,30)
+COMPARE_WITH_PREV_ENTRIES = (1,7,30)
 
 def get_util_list(num):
     lst=[]
@@ -182,21 +184,56 @@ def t_test_result(curr_lst,old_lst):
     if len(curr_lst) == 0:
         raise ValueError("Response time for current test not generated")
     t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
-    # t_stats,p_val = stats.mannwhitneyu(old_lst,curr_lst)
-    alpha = 0.01
+    alpha = 0.05
     if p_val >=alpha:
         return "4"
     if t_stats <= 0:
         return "2"
     return "3"
+def man_u_test_result(curr_lst,old_lst):
+    """
+        1 - comparison not possible as old data does not exist
+        2 - Performance decreased compared to prev entry
+        3 - Performance improved compared to prev entry
+        4 - Almost similar Performance . We can not reject the null hypothesis
+    """
+    print("inside man_u")
+    if len(old_lst) == 0:
+        return "1"
+    if len(curr_lst) == 0:
+        raise ValueError("Response time for current test not generated")
+    statistic, p_val = mannwhitneyu(old_lst, curr_lst)
+    hodges_lehmann_estimate = np.median([y - x for x in old_lst for y in curr_lst])
+    # t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
+    alpha = 0.05
+    if p_val >=alpha:
+        return "4"
+    if hodges_lehmann_estimate <= 0:
+        return "3"
+    return "2"
+    
+def normality_test(curr_l):
+    print("Normality check")
+    statistic, p_value = stats.shapiro(curr_l)
+    alpha = 0.05
+    if p_value > alpha:
+        return 1
+        # print("Sample looks Gaussian (fail to reject H0)")
+    else:
+        return 0
+        # print("Sample does not look Gaussian (reject H0)")
 
 def generate_t_test_results(db_test_id,log_path):
+    print(db_test_id)
     headers= ["API Name","Avg. Resp Time","std deviation"]
     for val in COMPARE_WITH_PREV_ENTRIES:
         headers.append("-"+str(val)+" D")
     res = []
     res.append(headers)
-
+    
+    test_report=[]
+    h1=["API Name","Avg. Resp Time Present","std deviation Present","Avg. Resp Time -1D","std deviation -1D","Avg. Resp Time -7D","std deviation -7D","Avg. Resp Time -30D","std deviation -30D"]
+    test_report.append(h1)
     with open('APIs.json','r') as f:
         api_info = json.load(f)
     apilist=[]
@@ -204,6 +241,7 @@ def generate_t_test_results(db_test_id,log_path):
         filename=item["APIName"]
         apilist.append(filename)
     for apiname in apilist:
+        api_res=[]
         api_info=[]
         api_rt_lst = read_from_csv(db_test_id,apiname,log_path) # response time
         api_mean = round(np.mean(api_rt_lst),2)
@@ -211,43 +249,39 @@ def generate_t_test_results(db_test_id,log_path):
         api_info.append(apiname)
         api_info.append(str(api_mean))
         api_info.append(str(api_std_dev))
+        api_res.append(apiname)
+        api_res.append(str(api_mean))
+        api_res.append(str(api_std_dev))
         for val in COMPARE_WITH_PREV_ENTRIES:
             prev_id = db_test_id-val
             prev_rt_lst = read_from_csv(prev_id,apiname,log_path)
-            t_res=t_test_result(api_rt_lst,prev_rt_lst)
+            lengthprev=len(prev_rt_lst)
+            if(lengthprev==0):
+                api_res.append("N.A")
+                api_res.append("N.A")
+            else:
+                a_m = round(np.mean(prev_rt_lst),2)
+                a_dev = round(np.std(prev_rt_lst),2)
+                api_res.append(str(a_m))
+                api_res.append(str(a_dev))
+            print("the prev id is staring here")
+            print(prev_id)
+            normal_1= normality_test(api_rt_lst)
+            normal_2=normality_test(prev_rt_lst)
+            if (normal_1 and normal_2):
+                t_res=t_test_result(api_rt_lst,prev_rt_lst)
+            else:
+                t_res=man_u_test_result(api_rt_lst,prev_rt_lst)
+            # t_res=t_test_result(api_rt_lst,prev_rt_lst)
             api_info.append(str(t_res))
         res.append(api_info)
-    return res
-
-def generate_test_results(test_type,db_test_id,log_path):
-    headers= ["API Name","Avg. Resp Time","std deviation"]
-    for val in COMPARE_WITH_PREV_ENTRIES:
-        headers.append("-"+str(val)+" D")
-    res = []
-    res.append(headers)
-
-    with open('APIs.json','r') as f:
-        api_info = json.load(f)
-    apilist=[]
-    for item in api_info:
-        filename=item["APIName"]
-        apilist.append(filename)
-    for apiname in apilist:
-        api_info=[]
-        api_rt_lst = read_from_csv(db_test_id,apiname,log_path) # response time
-        api_mean = round(np.mean(api_rt_lst),2)
-        api_std_dev = round(np.std(api_rt_lst),2)
-        api_info.append(apiname)
-        api_info.append(str(api_mean))
-        api_info.append(str(api_std_dev))
-        for val in COMPARE_WITH_PREV_ENTRIES:
-            prev_id = db_test_id-val
-            prev_rt_lst = read_from_csv(prev_id,apiname,log_path)
-            t_res=t_test_result(api_rt_lst,prev_rt_lst)
-            api_info.append(str(t_res))
-        res.append(api_info)
-        print(api_info)
-    print(res)
+        test_report.append(api_res)
+        
+    csv_file = "testreport.csv"
+    with open(csv_file, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(test_report)
+    # print(test_report)
     return res
 
 def test_id_to_time(test_id):
@@ -356,9 +390,7 @@ def extract_historical_data(test_id):
     os.chdir('../..')
     print(test_id)
     insert_test_in_db(test_id)
-    # result = generate_t_test_results(db_test_id,log_data_dir)
-    test_type = "t-test" # auto or mann-whitney
-    result = generate_test_results(test_type,db_test_id,log_data_dir)
+    result = generate_t_test_results(db_test_id,log_data_dir)
     print_test_results(result)
     outfile="results.csv"
     if not os.path.exists(outfile):
@@ -409,22 +441,19 @@ def get_cpu_files(lower,upper,step):
 
 def sys_perf_check(test_id,msg="",num_user=0):
     url = test_host + f"sys_perf_check/{test_id}-{msg}/{num_user}/"
-    requests.get(url)
+    requests.get(url,verify=False)
 
 def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
     sys_perf_check(test_id,"START")
     for num_user in range(lower_bound,upper_bound+1,step_size):
         write_config(test_id,num_user)
-        rate=ceil(num_user*0.02)
+        rate=ceil(num_user*0.01)
         time=run_time #seconds
         message=["MeasureCPU",str(time),str(num_user)]
         send_client_status_no_receive(CPU_HOST,message)
         locust_cmd=["locust","-f","./perfcheck.py",\
             "--headless","-u",f"{num_user}","-r",f"{rate}","-t",f"{time}",\
                 "--csv-full-history",f"--csv={test_id}/{num_user}"]
-        print("*"*30)
-        print(locust_cmd)
-        print("*"*30)
         sys_perf_check(test_id,"start",num_user)
         subprocess.run(locust_cmd)
         sys_perf_check(test_id,"end",num_user)
@@ -450,13 +479,6 @@ def command_line_args():
     parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
     args = parser.parse_args()
     return args.l,args.u,args.s,args.t
-def command_line_args_apc():
-    parser = argparse.ArgumentParser(prog='./client_end_script.py',\
-    description='To monitor performance of APIs over time')
-    parser.add_argument('-l',metavar="NUMBER_OF_USERS",required=True,type=int,help='Specify the number of users in the performance test')
-    parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
-    args = parser.parse_args()
-    return args.l,args.t
 
 def get_server_logs(test_id):
     num_lines_extract=200000 # change this in the future based upon need
@@ -546,7 +568,7 @@ def extract_time(id_pattern,file_name,timeUnit):
         csvwriter.writerows(data)
 
 def client_run(testName,logHost,numLinesExtract):
-    message = ["ExtractLogsNew",testName,str(numLinesExtract)]
+    message = ["ExtractLogs",testName,str(numLinesExtract)]
     extractionStatus=send_client_status(logHost,message)
     if extractionStatus != "ExtractionComplete":
         print("Unable to Extract Logs")
@@ -741,12 +763,3 @@ def showgui(test_id):
 def constructor_script():
     constructor=["python3","initial_script.py"]
     subprocess.run(constructor)
-
-if __name__ == "__main__":
-    base_dir=os.getcwd()
-    log_data_dir = base_dir+"/logs/resp_time"
-    test_type = "t-test"
-    db_test_id = 40
-    result = generate_test_results(test_type,db_test_id,log_data_dir)
-    print(result)
-    print_test_results(result)
