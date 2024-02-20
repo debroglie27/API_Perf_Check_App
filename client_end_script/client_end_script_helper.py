@@ -19,7 +19,7 @@ test_host="https://safev2.cse.iitb.ac.in/"
 CPU_HOST ="10.129.7.11"
 HTTP_PORT="5002"
 DB_FILE = "testdates.db"
-compare_with_prev_entries= (1,7,30)
+COMPARE_WITH_PREV_ENTRIES= (1,7,30)
 
 def get_util_list(num):
     lst=[]
@@ -192,7 +192,7 @@ def t_test_result(curr_lst,old_lst):
 
 def generate_t_test_results(db_test_id,log_path):
     headers= ["API Name","Avg. Resp Time","std deviation"]
-    for val in compare_with_prev_entries:
+    for val in COMPARE_WITH_PREV_ENTRIES:
         headers.append("-"+str(val)+" D")
     res = []
     res.append(headers)
@@ -211,12 +211,43 @@ def generate_t_test_results(db_test_id,log_path):
         api_info.append(apiname)
         api_info.append(str(api_mean))
         api_info.append(str(api_std_dev))
-        for val in compare_with_prev_entries:
+        for val in COMPARE_WITH_PREV_ENTRIES:
             prev_id = db_test_id-val
             prev_rt_lst = read_from_csv(prev_id,apiname,log_path)
             t_res=t_test_result(api_rt_lst,prev_rt_lst)
             api_info.append(str(t_res))
         res.append(api_info)
+    return res
+
+def generate_test_results(test_type,db_test_id,log_path):
+    headers= ["API Name","Avg. Resp Time","std deviation"]
+    for val in COMPARE_WITH_PREV_ENTRIES:
+        headers.append("-"+str(val)+" D")
+    res = []
+    res.append(headers)
+
+    with open('APIs.json','r') as f:
+        api_info = json.load(f)
+    apilist=[]
+    for item in api_info:
+        filename=item["APIName"]
+        apilist.append(filename)
+    for apiname in apilist:
+        api_info=[]
+        api_rt_lst = read_from_csv(db_test_id,apiname,log_path) # response time
+        api_mean = round(np.mean(api_rt_lst),2)
+        api_std_dev = round(np.std(api_rt_lst),2)
+        api_info.append(apiname)
+        api_info.append(str(api_mean))
+        api_info.append(str(api_std_dev))
+        for val in COMPARE_WITH_PREV_ENTRIES:
+            prev_id = db_test_id-val
+            prev_rt_lst = read_from_csv(prev_id,apiname,log_path)
+            t_res=t_test_result(api_rt_lst,prev_rt_lst)
+            api_info.append(str(t_res))
+        res.append(api_info)
+        print(api_info)
+    print(res)
     return res
 
 def test_id_to_time(test_id):
@@ -325,7 +356,9 @@ def extract_historical_data(test_id):
     os.chdir('../..')
     print(test_id)
     insert_test_in_db(test_id)
-    result = generate_t_test_results(db_test_id,log_data_dir)
+    # result = generate_t_test_results(db_test_id,log_data_dir)
+    test_type = "t-test" # auto or mann-whitney
+    result = generate_test_results(test_type,db_test_id,log_data_dir)
     print_test_results(result)
     outfile="results.csv"
     if not os.path.exists(outfile):
@@ -513,7 +546,7 @@ def extract_time(id_pattern,file_name,timeUnit):
         csvwriter.writerows(data)
 
 def client_run(testName,logHost,numLinesExtract):
-    message = ["ExtractLogs",testName,str(numLinesExtract)]
+    message = ["ExtractLogsNew",testName,str(numLinesExtract)]
     extractionStatus=send_client_status(logHost,message)
     if extractionStatus != "ExtractionComplete":
         print("Unable to Extract Logs")
@@ -710,4 +743,10 @@ def constructor_script():
     subprocess.run(constructor)
 
 if __name__ == "__main__":
-    pass
+    base_dir=os.getcwd()
+    log_data_dir = base_dir+"/logs/resp_time"
+    test_type = "t-test"
+    db_test_id = 40
+    result = generate_test_results(test_type,db_test_id,log_data_dir)
+    print(result)
+    print_test_results(result)
