@@ -1,9 +1,10 @@
-from client_end_script_helper import extract_historical_data,set_up_db,get_auto_test_id,DB_FILE
-import sqlite3
+# from client_end_script_helper import extract_historical_data,set_up_db,get_auto_test_id,DB_FILE
+# import sqlite3
 import csv
 import json
 import numpy as np
 import scipy.stats as stats
+from config import COMPARE_WITH_PREV_ENTRIES
 
 # def insertions():
 #     conn = sqlite3.connect(DB_FILE)
@@ -97,7 +98,6 @@ import scipy.stats as stats
 ######################################################################################################
 
 
-compare_with_prev_entries= (1,7,30)
 def read_from_csv(test_id,api,path):
     test_id=str(test_id)
     response_time_lst=[]
@@ -150,7 +150,7 @@ def t_test_result(curr_lst,old_lst):
 
 def generate_t_test_results(db_test_id,log_path):
     headers= ["API Name","Avg. Resp Time","std deviation"]
-    for val in compare_with_prev_entries:
+    for val in COMPARE_WITH_PREV_ENTRIES:
         headers.append("-"+str(val)+" D")
     res = []
     res.append(headers)
@@ -169,7 +169,7 @@ def generate_t_test_results(db_test_id,log_path):
         api_info.append(apiname)
         api_info.append(str(api_mean))
         api_info.append(str(api_std_dev))
-        for val in compare_with_prev_entries:
+        for val in COMPARE_WITH_PREV_ENTRIES:
             prev_id = db_test_id-val
             prev_rt_lst = read_from_csv(prev_id,apiname,log_path)
             t_res=t_test_result(api_rt_lst,prev_rt_lst)

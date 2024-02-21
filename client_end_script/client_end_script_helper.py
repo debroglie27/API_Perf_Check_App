@@ -15,14 +15,10 @@ from colorama import Fore, Style
 from scipy.stats import mannwhitneyu
 import numpy as np
 from scipy import stats
+from config import LOG_HOST,TEST_SERVER_HOST,CPU_HOST,HTTP_PORT,COMPARE_WITH_PREV_ENTRIES,SEARCH_LINES_LIMIT,FTP_SERVER_PORT,SERVER_DAEMON_PORT
 
-log_host="10.129.7.11"
-test_host="https://safev2.cse.iitb.ac.in/"
-CPU_HOST ="10.129.7.11"
-HTTP_PORT="5002"
+
 DB_FILE = "testdates.db"
-COMPARE_WITH_PREV_ENTRIES = (1,7,30)
-
 def get_util_list(num):
     lst=[]
     in_file=str(num)+"_users.txt"
@@ -188,8 +184,8 @@ def t_test_result(curr_lst,old_lst):
     if p_val >=alpha:
         return "4"
     if t_stats <= 0:
-        return "2"
-    return "3"
+        return "3"
+    return "2"
 def man_u_test_result(curr_lst,old_lst):
     """
         1 - comparison not possible as old data does not exist
@@ -209,19 +205,22 @@ def man_u_test_result(curr_lst,old_lst):
     if p_val >=alpha:
         return "4"
     if hodges_lehmann_estimate <= 0:
-        return "3"
-    return "2"
+        return "2"
+    return "3"
     
 def normality_test(curr_l):
     print("Normality check")
-    statistic, p_value = stats.shapiro(curr_l)
-    alpha = 0.05
-    if p_value > alpha:
-        return 1
-        # print("Sample looks Gaussian (fail to reject H0)")
-    else:
-        return 0
-        # print("Sample does not look Gaussian (reject H0)")
+    try:
+        statistic, p_value = stats.shapiro(curr_l)
+        alpha = 0.05
+        if p_value > alpha:
+            return 1
+            # print("Sample looks Gaussian (fail to reject H0)")
+        else:
+            return 0
+            # print("Sample does not look Gaussian (reject H0)")
+    except ValueError:
+        return 0 # go for non gaussian
 
 def generate_t_test_results(db_test_id,log_path):
     print(db_test_id)
@@ -423,7 +422,7 @@ def get_cpu_files(lower,upper,step):
     os.chdir("cpu_utilization")
     for users in range(lower,upper+1,step):
         file_name=str(users)+"_users"+".txt"
-        file_address="http://"+CPU_HOST+":"+HTTP_PORT+"/"+file_name
+        file_address="http://"+CPU_HOST+":"+str(HTTP_PORT)+"/"+file_name
         get_file=["curl",file_address]
         response = subprocess.run(get_file,capture_output=True,text=True)
         print("hit")    
@@ -440,14 +439,14 @@ def get_cpu_files(lower,upper,step):
     os.chdir("..")
 
 def sys_perf_check(test_id,msg="",num_user=0):
-    url = test_host + f"sys_perf_check/{test_id}-{msg}/{num_user}/"
-    requests.get(url,verify=False)
+    url = TEST_SERVER_HOST+ f"sys_perf_check/{test_id}-{msg}/{num_user}/"
+    requests.get(url)
 
 def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
     sys_perf_check(test_id,"START")
     for num_user in range(lower_bound,upper_bound+1,step_size):
         write_config(test_id,num_user)
-        rate=ceil(num_user*0.01)
+        rate=ceil(num_user*0.02)
         time=run_time #seconds
         message=["MeasureCPU",str(time),str(num_user)]
         send_client_status_no_receive(CPU_HOST,message)
@@ -469,6 +468,13 @@ def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
     generate_utilization_csv(lower_bound,upper_bound,step_size)
     os.chdir("..")
 
+def command_line_args_apc():
+    parser = argparse.ArgumentParser(prog='./client_end_script.py',\
+    description='To monitor performance of APIs over time')
+    parser.add_argument('-l',metavar="NUMBER_OF_USERS",required=True,type=int,help='Specify the number of users in the performance test')
+    parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
+    args = parser.parse_args()
+    return args.l,args.t
 
 def command_line_args():
     parser = argparse.ArgumentParser(prog='./client_end_script.py',\
@@ -481,8 +487,8 @@ def command_line_args():
     return args.l,args.u,args.s,args.t
 
 def get_server_logs(test_id):
-    num_lines_extract=200000 # change this in the future based upon need
-    client_run(test_id,log_host,num_lines_extract)
+    num_lines_extract= SEARCH_LINES_LIMIT
+    client_run(test_id,LOG_HOST,num_lines_extract)
     extract_file = str(test_id)+ ".tar.gz"
     subprocess.run(["tar","-xvzf",extract_file])
     subprocess.run(['cp','components.json',test_id])
@@ -568,7 +574,7 @@ def extract_time(id_pattern,file_name,timeUnit):
         csvwriter.writerows(data)
 
 def client_run(testName,logHost,numLinesExtract):
-    message = ["ExtractLogs",testName,str(numLinesExtract)]
+    message = ["ExtractLogsNew",testName,str(numLinesExtract)]
     extractionStatus=send_client_status(logHost,message)
     if extractionStatus != "ExtractionComplete":
         print("Unable to Extract Logs")
@@ -584,7 +590,7 @@ def client_run(testName,logHost,numLinesExtract):
     print(FTPServerStatus)
 
 def send_client_status_no_receive(host,message):
-    port = 5000  # socket server port number
+    port = SERVER_DAEMON_PORT  # socket server port number
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server
@@ -594,7 +600,7 @@ def send_client_status_no_receive(host,message):
     client_socket.send(message.encode())  # send message
 
 def send_client_status(host,message):
-    port = 5000  # socket server port number
+    port = SERVER_DAEMON_PORT  # socket server port number
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server
@@ -611,7 +617,7 @@ def send_client_status(host,message):
     #     exit(1)
 
 def ftp_client(host,testName):
-    port=5001
+    port=FTP_SERVER_PORT
     fileName = testName+".tar.gz"
     ftp = FTP()
     ftp.connect(host,port)

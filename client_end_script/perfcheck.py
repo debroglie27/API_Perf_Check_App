@@ -1,6 +1,7 @@
 from locust import HttpUser,SequentialTaskSet,task,constant,events
 from locust.exception import StopUser
-from client_end_script_helper import test_host,read_config
+from client_end_script_helper import read_config
+from config import TEST_SERVER_HOST
 from credentials import *
 from Answers import *
 from CourseCode import coursecode
@@ -60,6 +61,7 @@ class PerfCheck(SequentialTaskSet):
         url = "api/quiz/"+ self.codeid + "/download/"
         with self.client.get(url,name="5.quiz_download",catch_response=True) as response:
             print("quiz_download:",response)
+            # print("quiz_download:",response.text)
 
     @task
     def quiz_authenticate(self):
@@ -67,14 +69,14 @@ class PerfCheck(SequentialTaskSet):
         with self.client.get(url,name="6.quiz_authenticate",catch_response=True) as response:
             print("quiz_authenticate:",response)
 
-    ## @task
-    ## def upload_image_(self):
-    ##     url = "api/quiz/uploadImage/"
-    ##     # attach = open('low.jpg', 'rb')
-    ##     attach = open('mid.jpg', 'rb')
-    ##     # attach = open('high.jpg', 'rb')
-    ##     with self.client.post(url, name="7.upload_image", files=dict(ansimage=attach), headers={"X-CSRFToken": self.csrftoken}, catch_response=True) as response:
-    ##         print(url+"done")
+    # @task
+    # def upload_image_(self):
+    #     url = "api/quiz/uploadImage/"
+    #     # attach = open('low.jpg', 'rb')
+    #     attach = open('mid.jpg', 'rb')
+    #     # attach = open('high.jpg', 'rb')
+    #     with self.client.post(url, name="7.upload_image", files=dict(ansimage=attach), headers={"X-CSRFToken": self.csrftoken}, catch_response=True) as response:
+    #         print(url+"done")
 
     @task
     def quiz_submit(self):
@@ -105,6 +107,6 @@ class PerfCheck(SequentialTaskSet):
 class MySeqTest(HttpUser):
     # fixed_count=1
     wait_time=constant(1)
-    host =test_host
+    host = TEST_SERVER_HOST
     tasks = [PerfCheck]
 

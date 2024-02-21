@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number of Users Vs Response Times</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+        }
+
+        .table-container {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .styled-table {
+            border-collapse: collapse;
+            font-size: 1.5em;
+            font-family: sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #009879;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Consolidated Results</h1>
+    </header>
+ <div class="table-container"><h1 style="min-width:100%;text-align: center;">Final comparison Report</h1><table class="styled-table" style="min-width: 100%;">
+                <thead>
+                    <tr><th>API Name</th><th>Avg. Resp Time Present</th><th>std deviation Present</th><th>Avg. Resp Time -1D</th><th>std deviation -1D</th><th>Avg. Resp Time -7D</th><th>std deviation -7D</th><th>Avg. Resp Time -30D</th><th>std deviation -30D</th></tr>
+                </thead>
+                <tbody><tr><td>1.login</td><td>612.37</td><td>275.66</td><td>400.33</td><td>18.28</td><td>N.A</td><td>N.A</td><td>504.29</td><td>211.51</td></tr><tr><td>2.course_list</td><td>87.66</td><td>129.0</td><td>29.3</td><td>2.53</td><td>N.A</td><td>N.A</td><td>76.72</td><td>150.1</td></tr><tr><td>3.quiz_list</td><td>96.65</td><td>245.0</td><td>29.13</td><td>1.96</td><td>N.A</td><td>N.A</td><td>86.74</td><td>203.12</td></tr><tr><td>4.quiz_info</td><td>1265.03</td><td>355.01</td><td>1043.27</td><td>80.9</td><td>N.A</td><td>N.A</td><td>1958.46</td><td>561.21</td></tr><tr><td>5.quiz_download</td><td>128.24</td><td>325.02</td><td>22.33</td><td>2.97</td><td>N.A</td><td>N.A</td><td>89.77</td><td>266.47</td></tr><tr><td>6.quiz_authenticate</td><td>185.96</td><td>149.82</td><td>85.0</td><td>46.39</td><td>N.A</td><td>N.A</td><td>202.73</td><td>285.04</td></tr><tr><td>7.quiz_submit</td><td>1075.71</td><td>190.3</td><td>959.03</td><td>72.2</td><td>N.A</td><td>N.A</td><td>595.76</td><td>236.37</td></tr></tbody>
+            </table> 
+        </div>
+    </body>
+    </html>

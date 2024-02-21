@@ -43,7 +43,7 @@ def login_and_publish_quiz():
         "start_time":"T",
         "end_time":"T",
     }
-    publish_quiz_url = host+"web_api/quiz/17695/publish-quiz/"
+    publish_quiz_url = host+"web_api/quiz/19278/publish-quiz/"
     publish_quiz_response = session.post(publish_quiz_url,data=publish_data)
     print(publish_quiz_response.text)
     publish_response=json.loads(publish_quiz_response.text)
