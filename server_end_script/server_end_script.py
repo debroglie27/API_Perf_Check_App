@@ -17,6 +17,7 @@ CPU_UTIL_TIME_MARGIN=3
 CPU_DIRECTORY="cpu_utilization"
 
 HTTP_PORT="5002"
+childid = 0
 
 def FTPthread():
     if os.path.isdir("public") == False:
@@ -126,10 +127,19 @@ def serverLogExtraction():
             print("received empty message from client")
             exit(1)
         msg_lst = data.split(",") 
+        global childid
 
         # Extract logs and fork an ftp-server
         if msg_lst[0] == "ExtractLogs":
-            global childid
+            childid=os.fork()
+            if childid==0:
+                FTPthread()
+            print("TestName:",msg_lst[1])
+            print("numLinesExtract:",msg_lst[2])
+            data = extractLogs(msg_lst[1],msg_lst[2])
+            print(data)
+            conn.send(data.encode()) 
+        elif msg_lst[0] == "ExtractLogsNew":
             childid=os.fork()
             if childid==0:
                 FTPthread()
