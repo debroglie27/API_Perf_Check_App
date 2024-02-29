@@ -9,6 +9,7 @@
 * To know more about api_perf_check refer this [link](resources/api_perf_check.pptx) 
 
 ## Initial Setup
+The initial setup is described using SAFE as an example, you need to configure it as per your use case.
 ### Configuring hosts and ports
 
 * the config.py file in client_end_script
@@ -16,6 +17,8 @@
 TEST_SERVER_HOST="https://safev2.cse.iitb.ac.in/" # host which will point to the backend app 
 LOG_HOST="10.129.7.11" # host where logs will be collected
 CPU_HOST ="10.129.7.11" # host where the application is running
+
+COMPARE_WITH_PREV_ENTRIES = (1,7,30) # this mentions the previous entries with which API performance is compared
 
 # the below ones should only be configured in case ports are not available
 # match with the config.py file in server_end_script
@@ -70,11 +73,26 @@ HTTP_PORT=5002
 * This script will be triggered before each performance test like a constructor
 
 ### APIs.json
+* This file will contain the APIs that need to be monitored
+* It will also contain the search term for each component
+* e.g. shown below, whole file can be seen in [link](client_end_script/APIs.json)
+```
+[
+    {
+        "APIName":"1.login",
+        "searchTerm":"\/api\/account\/login"
+    },
+    {
+        "APIName":"2.course_list",
+        "searchTerm":"\/api\/course"
+    }
+]
+```
+
 
 ## Running the tool
 ### Start the server_end_script
 * install twisted module (using pip)
-* install htop on the machine for cpu utilization
 
 ```
 # requires a components.json file
@@ -91,12 +109,13 @@ $ docker build -t <image_name>
 
 #### Run the script using the docker container
 ```
-$ docker run --rm -p <result_port>:5500 -v $(pwd):/app <image_name> python3 client_end_script.py -l <start_load> -u <end_load> -s <step_size> -t <duration>
+$ docker run --rm -p <result_port>:5500 -v $(pwd):/app <container_name> python3 client_end_script.py -l <user load> -t <duration>
 ```
 
 ### Results
-* they will be available at <result_port> and can be seen in the browser
+* results indicating changes in API performance will be visible at the console
+![result_console](resources/result_console.png "result console")
+
+* Also, they will be available at <result_port> and can be seen in the browser
 * e.g. image of result shown below
-![result_home](resources/result_home.png "result homepage")
-![result_response_time](resources/result_response_time.png "response time vs num of users")
-![result_cpu](resources/result_cpu.png "cpu utilization vs num of users")
+![result_home](resources/result_home_apc.png "result homepage")
