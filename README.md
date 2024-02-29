@@ -1,13 +1,12 @@
-# sys_perf_check_tool
+# api_perf_check
 ## Description
 * Modern web apps are composed of a frontend and a backend
-* The backend is often composed of multiple components
-* It is possible that you might have a component in backend that is choking the system at a certain load
-* sys_perf_check helps us detect such a component
-* e.g. of a such a system is shown below
-![example_backend_components](resources/example_components_backend.png "Backend with multiple components")
+* The backend often exposes API endpoints to the browser/mobile clients
+* With changes in the code/state of the application the performance of these APIs might be affected
+* our tool allows us to track the performance change in theses apis
+* highlights those APIs whose performance have changed significantly
 * the tool itself is composed of two components the client_end_script and server_end_script
-* for a brief idea of sys_perf_check refer this [link](resources/brief.pptx) and for a detailed one refer this [link](resources/detailed.pptx)
+* To know more about api_perf_check refer this [link](resources/api_perf_check.pptx) 
 
 ## Initial Setup
 ### Configuring hosts and ports
@@ -37,7 +36,9 @@ HTTP_PORT=5002
 ```
 
 ### components.json
-* Need to define a components.json file that will be used by both the client_end_script and server_end_script
+* this component could be any component where response time for test are stored. e.g nginx,django,etc
+* only one such component is enough
+* the components.json file will be used by both the client_end_script and server_end_script
 * e.g. of the components.json is shown below
 ```
 [
@@ -45,39 +46,30 @@ HTTP_PORT=5002
         "componentName":"outer-nginx",
         "logPath":"/var/log/nginx/safev2.cse-proxy-access.log",
         "timeUnit":"s"
-    },
-    {
-        "componentName":"uwsgi",
-        "logPath":"/home/safev2admin/kashmira/safe_server_v2/logs/uwsgi/uwsgi-daemonize.log",
-        "timeUnit":"ms"
     }
-
 ]
 ```
 
-### Registering sys_perf_check endpoint
-* make sure to register the below code as an api end point in your web application at path: <host_name>/sys_perf_check/<test-id>/<num_users>
-* e.g for python shown below
-```
-# a loop that uses cpu for 10 ms
-def sys_perf_check_end_point(request,test_id,numuser):
-    y=0
-    x=timeit.default_timer()
-    while((timeit.default_timer()-x)<0.01):
-        y=y+1
-    z=timeit.default_timer()
-    res=(z-x)*1000
-    return HttpResponse("the time taken to execute the test "+test_id+" for id is "+str(res)+" miliseconds for the number of user "+numuser)
-```
-
 ### Logs
-* turn on the logs for each component mentioned in components.json
+* turn on the logs for the component mentioned in components.json
 * make sure the response time should be like \*\*\*<response_time>\*\*\* in logs
-* request should be displayed like /sys_perf_check/<test-id>/<response-time>
-* e.g. logs shown belos
+* e.g. logs shown below
 ```
 [24/Jul/2023:13:52:10 +0530] GET /sys_perf_check/0a0f8d235d819a03/20/ HTTP/1.0***0.024***
 ```
+
+### perfcheck.py
+* a script written in locust to generate load on the APIs that need to be monitored.
+* you can refer the example in [link](client_end_script/perfcheck.py), it is for SAFE application and involves various APIs
+* you can also link other files in this perfcheck.py as per your need if your performance tests require them.For example in SAFE we require CourseCode.py, credentials.py, TestName.py 
+
+### initial_script.py
+* This script should contain steps that will do the initial setup before starting the actual performance test
+* In our case we need to login as instructor, publish and start the quiz before doing the actual test
+* Refer the [link](client_end_script/initial_script.py) for more details
+* This script will be triggered before each performance test like a constructor
+
+### APIs.json
 
 ## Running the tool
 ### Start the server_end_script
