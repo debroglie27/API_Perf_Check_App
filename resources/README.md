@@ -1,0 +1,1 @@
+* To open presentations use google slides.
