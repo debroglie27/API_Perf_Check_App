@@ -10,21 +10,19 @@ from twisted.cred.checkers import AllowAnonymousAccess
 from twisted.cred.portal import Portal
 from twisted.internet import reactor
 from twisted.protocols.ftp import FTPFactory,FTPRealm
+from config import SERVER_DAEMON_PORT,HTTP_PORT,FTP_SERVER_PORT
 
-TCP_PORT = 5000
-CPU_UTIL_FILE="cpu_utilization.txt"
 CPU_UTIL_TIME_MARGIN=3
+CPU_UTIL_FILE="cpu_utilization.txt"
 CPU_DIRECTORY="cpu_utilization"
 
-HTTP_PORT="5002"
 childid = 0
-
 def FTPthread():
     if os.path.isdir("public") == False:
         os.makedirs("public")
     portal = Portal(FTPRealm("./public"),[AllowAnonymousAccess()])
     factory = FTPFactory(portal)
-    reactor.listenTCP(5001,factory)
+    reactor.listenTCP(FTP_SERVER_PORT,factory)
     reactor.run()
     reactor.stop()
 
@@ -113,7 +111,7 @@ def serverLogExtraction():
     # port = 5000  # initiate port no above 1024
 
     server_socket = socket.socket()  # get instance
-    server_socket.bind((host, TCP_PORT))  # bind host address and port together
+    server_socket.bind((host, SERVER_DAEMON_PORT))  # bind host address and port together
 
     # configure how many client the server can listen simultaneously
     server_socket.listen(2)
@@ -198,7 +196,7 @@ def extract_cpu_usage_for_num_users(num):
 
 def run_http_server():
     os.chdir("./"+CPU_DIRECTORY)
-    httpServer = ["python3","-m","http.server",HTTP_PORT,"-b","0.0.0.0"]   
+    httpServer = ["python3","-m","http.server",str(HTTP_PORT),"-b","0.0.0.0"]   
     status=subprocess.Popen(httpServer)
     return status
 
