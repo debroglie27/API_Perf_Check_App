@@ -117,5 +117,4 @@ $ docker run --rm -p <result_port>:5500 -v $(pwd):/app <container_name> python3 
 ![result_console](resources/result_console.png "result console")
 
 * Also, they will be available at <result_port> and can be seen in the browser
-* e.g. image of result shown below
 ![result_home](resources/result_home_apc.png "result homepage")
