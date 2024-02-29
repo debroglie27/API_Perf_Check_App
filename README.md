@@ -6,7 +6,7 @@
 * our tool allows us to track the performance change in theses apis
 * highlights those APIs whose performance have changed significantly
 * the tool itself is composed of two components the client_end_script and server_end_script
-* To know more about api_perf_check refer this [link](resources/api_perf_check.pptx) 
+* To know more about api_perf_check refer this [link](https://docs.google.com/presentation/d/1hnvUVQksRVndZLaLrwU7ARQDaklXixan/edit?usp=sharing&ouid=113201880241968556669&rtpof=true&sd=true  "api_perf_check"), use slideshow while viewing.
 
 ## Initial Setup
 The initial setup is described using SAFE as an example, you need to configure it as per your use case.
