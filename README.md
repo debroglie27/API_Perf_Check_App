@@ -60,7 +60,7 @@ HTTP_PORT=5002
 
 ### perfcheck.py
 * a script written in locust to generate load on the APIs that need to be monitored.
-* you can refer the example in [link](client_end_script/perfcheck.py), it is for SAFE application and involves various APIs
+* you can refer the example in [link](client_end_script/perfcheck.py), it is for SAFE application and involves quiz taking sequential APIs
 * you can also link other files in this perfcheck.py as per your need if your performance tests require them.For example in SAFE we require CourseCode.py, credentials.py, TestName.py 
 
 ### initial_script.py
