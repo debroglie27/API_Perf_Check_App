@@ -180,7 +180,7 @@ def t_test_result(curr_lst,old_lst):
     if len(curr_lst) == 0:
         raise ValueError("Response time for current test not generated")
     t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
-    alpha = 0.05
+    alpha = 0.01
     if p_val >=alpha:
         return "4"
     if t_stats <= 0:
@@ -201,12 +201,12 @@ def man_u_test_result(curr_lst,old_lst):
     statistic, p_val = mannwhitneyu(old_lst, curr_lst)
     hodges_lehmann_estimate = np.median([y - x for x in old_lst for y in curr_lst])
     # t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
-    alpha = 0.05
+    alpha = 0.01
     if p_val >=alpha:
         return "4"
     if hodges_lehmann_estimate <= 0:
-        return "2"
-    return "3"
+        return "3"
+    return "2"
     
 def normality_test(curr_l):
     print("Normality check")
@@ -448,8 +448,8 @@ def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
         write_config(test_id,num_user)
         rate=ceil(num_user*0.02)
         time=run_time #seconds
-        message=["MeasureCPU",str(time),str(num_user)]
-        send_client_status_no_receive(CPU_HOST,message)
+        # message=["MeasureCPU",str(time),str(num_user)]
+        # send_client_status_no_receive(CPU_HOST,message)
         locust_cmd=["locust","-f","./perfcheck.py",\
             "--headless","-u",f"{num_user}","-r",f"{rate}","-t",f"{time}",\
                 "--csv-full-history",f"--csv={test_id}/{num_user}"]
@@ -459,13 +459,13 @@ def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
     sys_perf_check(test_id,"END")
     subprocess.run(["rm","test.ini"])
     os.chdir(f"./{test_id}")
-    message=["start_http"]
-    send_client_status_no_receive(CPU_HOST,message)
-    sleep(5)
-    get_cpu_files(lower_bound,upper_bound,step_size)
-    message=["stop_http"]
-    send_client_status_no_receive(CPU_HOST,message)
-    generate_utilization_csv(lower_bound,upper_bound,step_size)
+    # message=["start_http"]
+    # send_client_status_no_receive(CPU_HOST,message)
+    # sleep(5)
+    # get_cpu_files(lower_bound,upper_bound,step_size)
+    # message=["stop_http"]
+    # send_client_status_no_receive(CPU_HOST,message)
+    # generate_utilization_csv(lower_bound,upper_bound,step_size)
     os.chdir("..")
 
 def command_line_args_apc():
