@@ -225,13 +225,15 @@ def normality_test(curr_l):
 def generate_t_test_results(db_test_id,log_path):
     print(db_test_id)
     headers= ["API Name","Avg. Resp Time","std deviation"]
+    listofhead=[]
     for val in COMPARE_WITH_PREV_ENTRIES:
         headers.append("-"+str(val)+" D")
+        listofhead.append (str(val)+" P.E")
     res = []
     res.append(headers)
     
     test_report=[]
-    h1=["API Name","Avg. Resp Time Present","std deviation Present","Avg. Resp Time -1D","std deviation -1D","Avg. Resp Time -7D","std deviation -7D","Avg. Resp Time -30D","std deviation -30D"]
+    h1=["API Name","Avg. Resp Time Present","std deviation Present","Avg. Resp Time "+ listofhead[0],"std deviation "+ listofhead[0],"Avg. Resp Time "+ listofhead[1],"std deviation "+listofhead[1],"Avg. Resp Time "+listofhead[2],"std deviation "+ listofhead[2]]
     test_report.append(h1)
     with open('APIs.json','r') as f:
         api_info = json.load(f)
