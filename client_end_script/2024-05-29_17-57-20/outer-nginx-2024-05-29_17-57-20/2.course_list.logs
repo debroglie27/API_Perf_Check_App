@@ -1,0 +1,16 @@
+[29/May/2024:23:27:24 +0530] GET /api/course/ HTTP/1.0***0.031***
+[29/May/2024:23:27:24 +0530] GET /api/course/ HTTP/1.0***0.037***
+[29/May/2024:23:27:25 +0530] GET /api/course/ HTTP/1.0***0.032***
+[29/May/2024:23:27:25 +0530] GET /api/course/ HTTP/1.0***0.035***
+[29/May/2024:23:27:26 +0530] GET /api/course/ HTTP/1.0***0.034***
+[29/May/2024:23:27:26 +0530] GET /api/course/ HTTP/1.0***0.036***
+[29/May/2024:23:27:26 +0530] GET /api/course/ HTTP/1.0***0.029***
+[29/May/2024:23:27:27 +0530] GET /api/course/ HTTP/1.0***0.030***
+[29/May/2024:23:27:27 +0530] GET /api/course/ HTTP/1.0***0.028***
+[29/May/2024:23:27:27 +0530] GET /api/course/ HTTP/1.0***0.032***
+[29/May/2024:23:27:28 +0530] GET /api/course/ HTTP/1.0***0.028***
+[29/May/2024:23:27:28 +0530] GET /api/course/ HTTP/1.0***0.029***
+[29/May/2024:23:27:29 +0530] GET /api/course/ HTTP/1.0***0.032***
+[29/May/2024:23:27:29 +0530] GET /api/course/ HTTP/1.0***0.030***
+[29/May/2024:23:27:31 +0530] GET /api/course/ HTTP/1.0***0.030***
+[29/May/2024:23:27:31 +0530] GET /api/course/ HTTP/1.0***0.029***

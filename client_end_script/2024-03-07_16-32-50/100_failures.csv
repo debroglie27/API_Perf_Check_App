@@ -1,0 +1,2 @@
+Method,Name,Error,Occurrences
+POST,7.quiz_submit,HTTPError('400 Client Error: Bad Request for url: 7.quiz_submit'),100

@@ -1,0 +1,9 @@
+
+[
+    {
+        "componentName":"outer-nginx",
+        "logPath":"/var/log/nginx/safev2.cse-proxy-access.log",
+        "timeUnit":"s"
+    }
+]
+

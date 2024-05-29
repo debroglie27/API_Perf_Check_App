@@ -1,0 +1,5 @@
+Method,Name,Error,Occurrences
+GET,2.course_list,HTTPError('401 Client Error: Unauthorized for url: https://safev2.cse.iitb.ac.in/api/course/'),10
+GET,3.quiz_list,HTTPError('401 Client Error: Unauthorized for url: https://safev2.cse.iitb.ac.in/api/quiz/CS007/downloadable-quizzes/'),10
+GET,6.quiz_authenticate,HTTPError('401 Client Error: Unauthorized for url: https://safev2.cse.iitb.ac.in/api/quiz/CS007.AG/authenticate/'),10
+GET,5.quiz_download,HTTPError('401 Client Error: Unauthorized for url: https://safev2.cse.iitb.ac.in/api/quiz/CS007.AG/download/'),10
