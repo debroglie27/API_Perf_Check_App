@@ -175,11 +175,13 @@ def t_test_result(curr_lst,old_lst):
         3 - Performance improved compared to prev entry
         4 - Almost similar Performance . We can not reject the null hypothesis
     """
+    print("t test used")
     if len(old_lst) == 0:
         return "1"
     if len(curr_lst) == 0:
         raise ValueError("Response time for current test not generated")
     t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
+    print("the t value is "+str(t_stats)+"the p value is "+str(p_val))
     alpha = 0.01
     if p_val >=alpha:
         return "4"
@@ -193,7 +195,7 @@ def man_u_test_result(curr_lst,old_lst):
         3 - Performance improved compared to prev entry
         4 - Almost similar Performance . We can not reject the null hypothesis
     """
-    print("inside man_u")
+    print("u test used")
     if len(old_lst) == 0:
         return "1"
     if len(curr_lst) == 0:
@@ -201,6 +203,7 @@ def man_u_test_result(curr_lst,old_lst):
     statistic, p_val = mannwhitneyu(old_lst, curr_lst)
     hodges_lehmann_estimate = np.median([y - x for x in old_lst for y in curr_lst])
     # t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
+    print("the hodges lehmann estimate value is "+str(hodges_lehmann_estimate)+"the p value is "+str(p_val))
     alpha = 0.01
     if p_val >=alpha:
         return "4"
@@ -226,14 +229,17 @@ def generate_t_test_results(db_test_id,log_path):
     print(db_test_id)
     headers= ["API Name","Avg. Resp Time","std deviation"]
     listofhead=[]
+    h1=["API Name","Average Response Time (ms) Present","Standard deviation (ms) Present"]
     for val in COMPARE_WITH_PREV_ENTRIES:
         headers.append("-"+str(val)+" D")
         listofhead.append (str(val)+" P.E")
+        h1.append("Average Response Time (ms) "+str(val)+" P.E")
+        h1.append("Standard deviation (ms) "+str(val)+" P.E")
     res = []
     res.append(headers)
     
     test_report=[]
-    h1=["API Name","Avg. Resp Time Present","std deviation Present","Avg. Resp Time "+ listofhead[0],"std deviation "+ listofhead[0],"Avg. Resp Time "+ listofhead[1],"std deviation "+listofhead[1],"Avg. Resp Time "+listofhead[2],"std deviation "+ listofhead[2]]
+    # h1=["API Name","Avg. Resp Time Present","std deviation Present","Avg. Resp Time "+ listofhead[0],"std deviation "+ listofhead[0],"Avg. Resp Time "+ listofhead[1],"std deviation "+listofhead[1],"Avg. Resp Time "+listofhead[2],"std deviation "+ listofhead[2]]
     test_report.append(h1)
     with open('APIs.json','r') as f:
         api_info = json.load(f)
@@ -245,9 +251,11 @@ def generate_t_test_results(db_test_id,log_path):
         api_res=[]
         api_info=[]
         api_rt_lst = read_from_csv(db_test_id,apiname,log_path) # response time
-        api_mean = round(np.mean(api_rt_lst),2)
-        api_std_dev = round(np.std(api_rt_lst),2)
+        api_mean = int(round(np.mean(api_rt_lst)))
+        api_std_dev = int(round(np.std(api_rt_lst)))
         api_info.append(apiname)
+        print("========================================================================")
+        print("this test is for "+apiname+"api")
         api_info.append(str(api_mean))
         api_info.append(str(api_std_dev))
         api_res.append(apiname)
@@ -261,11 +269,11 @@ def generate_t_test_results(db_test_id,log_path):
                 api_res.append("N.A")
                 api_res.append("N.A")
             else:
-                a_m = round(np.mean(prev_rt_lst),2)
-                a_dev = round(np.std(prev_rt_lst),2)
+                a_m = int(round(np.mean(prev_rt_lst)))
+                a_dev = int(round(np.std(prev_rt_lst)))
                 api_res.append(str(a_m))
                 api_res.append(str(a_dev))
-            print("the prev id is staring here")
+            print("the prev id is staring here and comparison is performed for "+str(val)+" days ago")
             print(prev_id)
             normal_1= normality_test(api_rt_lst)
             normal_2=normality_test(prev_rt_lst)

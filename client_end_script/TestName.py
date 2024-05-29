@@ -1,4 +1,4 @@
-quizid='CS007.HU'
+quizid='CS007.AG'
 if __name__=="__main__":
     testname = open("TestName.py","r")
     testname.readline()
