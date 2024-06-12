@@ -125,7 +125,7 @@ $ docker build -t <image_name>.
 
 #### Run the script using the docker container
 ```
-$ docker run --rm -p <result_port>:5500 -v $(pwd):/app <container_name> python3 client_end_script.py -l <user load> -t <duration>
+$ docker run --rm -p <result_port>:5500 -v $(pwd):/app <container_name> python3 client_end_script.py -l <user load> -r <ramp up rate>
 ```
 
 ### Results
