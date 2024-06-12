@@ -5,7 +5,7 @@ output="""
 To run the docker contaner created using the Dockerfile
 present in the current folder use:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-$ docker run -p 5500:5500 -v $(pwd):/app <container_name> python3 client_end_script.py -l <user load> -t <duration>
+$ docker run -p 5500:5500 -v $(pwd):/app <container_name> python3 client_end_module.py -l <user load> -r <duration>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Before running the container make sure the following requirements are met: 
 * hosts, ports, etc are configured correctly in the config.py file.

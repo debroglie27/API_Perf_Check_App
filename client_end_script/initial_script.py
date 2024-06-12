@@ -6,7 +6,7 @@ import subprocess
 host = "https://safev2.cse.iitb.ac.in/"
 login_url = host+"account/login/"
 username = "debajyotisaha1998@gmail.com"
-password = "hagu@1998"
+password = "hagu@123"
 
 
 def login_and_publish_quiz():
@@ -67,6 +67,7 @@ def login_and_publish_quiz():
 def set_test_name(quiz_uuid):
     command = f"echo {quiz_uuid} | python3 TestName.py"
     subprocess.run(command,shell=True)
+    print("Initial Scirpt over")
 
 if __name__ =="__main__":
     set_test_name(login_and_publish_quiz())

@@ -13,9 +13,8 @@ import sqlite3
 import scipy.stats as stats
 from colorama import Fore, Style
 from scipy.stats import mannwhitneyu
-import numpy as np
 from scipy import stats
-from config import LOG_HOST,TEST_SERVER_HOST,CPU_HOST,HTTP_PORT,COMPARE_WITH_PREV_ENTRIES,SEARCH_LINES_LIMIT,FTP_SERVER_PORT,SERVER_DAEMON_PORT
+from config import LOG_HOST,TEST_SERVER_HOST,CPU_HOST,HTTP_PORT,COMPARE_WITH_PREV_ENTRIES,SEARCH_LINES_LIMIT,FTP_SERVER_PORT,SERVER_DAEMON_PORT,RUN_TIME
 
 
 DB_FILE = "testdates.db"
@@ -231,7 +230,7 @@ def generate_t_test_results(db_test_id,log_path):
     listofhead=[]
     h1=["API Name","Average Response Time (ms) Present","Standard deviation (ms) Present"]
     for val in COMPARE_WITH_PREV_ENTRIES:
-        headers.append("-"+str(val)+" D")
+        headers.append(""+str(val)+" P.E.")
         listofhead.append (str(val)+" P.E")
         h1.append("Average Response Time (ms) "+str(val)+" P.E")
         h1.append("Standard deviation (ms) "+str(val)+" P.E")
@@ -452,49 +451,26 @@ def sys_perf_check(test_id,msg="",num_user=0):
     url = TEST_SERVER_HOST+ f"sys_perf_check/{test_id}-{msg}/{num_user}/"
     requests.get(url)
 
-def performance_test(lower_bound,upper_bound,step_size,run_time,test_id):
+def performance_test(num_user,ramp_up,test_id):
     sys_perf_check(test_id,"START")
-    for num_user in range(lower_bound,upper_bound+1,step_size):
-        write_config(test_id,num_user)
-        rate=ceil(num_user*0.02)
-        time=run_time #seconds
-        # message=["MeasureCPU",str(time),str(num_user)]
-        # send_client_status_no_receive(CPU_HOST,message)
-        locust_cmd=["locust","-f","./perfcheck.py",\
-            "--headless","-u",f"{num_user}","-r",f"{rate}","-t",f"{time}",\
-                "--csv-full-history",f"--csv={test_id}/{num_user}"]
-        sys_perf_check(test_id,"start",num_user)
-        subprocess.run(locust_cmd)
-        sys_perf_check(test_id,"end",num_user)
+    write_config(test_id,num_user)
+    rate=ceil(num_user*ramp_up)
+    time=RUN_TIME #seconds
+    locust_cmd=["locust","-f","./perfcheck.py",\
+        "--headless","-u",f"{num_user}","-r",f"{rate}","-t",f"{time}",\
+            "--csv-full-history",f"--csv={test_id}/{num_user}"]
+    subprocess.run(locust_cmd)
     sys_perf_check(test_id,"END")
     subprocess.run(["rm","test.ini"])
-    os.chdir(f"./{test_id}")
-    # message=["start_http"]
-    # send_client_status_no_receive(CPU_HOST,message)
-    # sleep(5)
-    # get_cpu_files(lower_bound,upper_bound,step_size)
-    # message=["stop_http"]
-    # send_client_status_no_receive(CPU_HOST,message)
-    # generate_utilization_csv(lower_bound,upper_bound,step_size)
-    os.chdir("..")
+
 
 def command_line_args_apc():
-    parser = argparse.ArgumentParser(prog='./client_end_script.py',\
+    parser = argparse.ArgumentParser(prog='./client_end_module.py',\
     description='To monitor performance of APIs over time')
     parser.add_argument('-l',metavar="NUMBER_OF_USERS",required=True,type=int,help='Specify the number of users in the performance test')
-    parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
+    parser.add_argument('-r',metavar="RAMP_UP_RATE",default=0.1,type=float,help='Specify the ramp up rate for performance test (between 0 and 1)')
     args = parser.parse_args()
-    return args.l,args.t
-
-def command_line_args():
-    parser = argparse.ArgumentParser(prog='./client_end_script.py',\
-    description='To figure out system level bottleneck component for REST API based services')
-    parser.add_argument('-l',metavar="LOWER_BOUND_USERS",required=True,type=int,help='Specify the lower bound of the number of users.')
-    parser.add_argument('-u',metavar="UPPER_BOUND_USERS",required=True,type=int,help='Specify the upper bound of the number of users.')
-    parser.add_argument('-s',metavar="STEP_SIZE",required=True,type=int,help='Specify the step size for incrementing the number of users.')
-    parser.add_argument('-t',metavar="RUN_TIME",default=60,type=int,help='Specify the runtime for each user number being tested')
-    args = parser.parse_args()
-    return args.l,args.u,args.s,args.t
+    return args.l,args.r
 
 def get_server_logs(test_id):
     num_lines_extract= SEARCH_LINES_LIMIT
@@ -777,5 +753,13 @@ def showgui(test_id):
     window.mainloop()
 
 def constructor_script():
-    constructor=["python3","initial_script.py"]
-    subprocess.run(constructor)
+    if os.path.isfile("./initial_script.py"):
+        constructor=["python3","initial_script.py"]
+        subprocess.run(constructor)
+        print()
+        print("initial_script executed")
+        print()
+    else:
+        print()
+        print("initial_script not used since it is not specified")
+        print()

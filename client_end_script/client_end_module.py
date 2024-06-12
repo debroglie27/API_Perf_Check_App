@@ -13,11 +13,11 @@ from testhtmlreport import(
 )
 
 if __name__ == '__main__':
-    number_of_users, run_time = command_line_args_apc()
+    number_of_users, ramp_up= command_line_args_apc()
     test_id = generate_test_id()
     constructor_script()
     create_test_directory(test_id)
-    performance_test(number_of_users, number_of_users, 1, run_time, test_id)
+    performance_test(number_of_users,ramp_up, test_id)
     get_server_logs(test_id)
     extract_historical_data(test_id)
     showgui()
