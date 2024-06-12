@@ -1,2 +1,0 @@
-Method,Name,Error,Occurrences
-GET,5.quiz_download,HTTPError('404 Client Error: Not Found for url: https://safev2.cse.iitb.ac.in/api/quiz/CS007.KY/download/'),8

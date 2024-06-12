@@ -1,8 +1,0 @@
-[29/May/2024:23:27:28 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.029***
-[29/May/2024:23:27:28 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.032***
-[29/May/2024:23:27:29 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.028***
-[29/May/2024:23:27:29 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.035***
-[29/May/2024:23:27:30 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.031***
-[29/May/2024:23:27:30 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.028***
-[29/May/2024:23:27:31 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.024***
-[29/May/2024:23:27:31 +0530] GET /api/quiz/CS007.AG/authenticate/ HTTP/1.0***0.031***

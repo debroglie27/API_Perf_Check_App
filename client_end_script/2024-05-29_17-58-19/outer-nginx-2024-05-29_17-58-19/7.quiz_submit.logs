@@ -1,6 +1,0 @@
-[29/May/2024:23:28:28 +0530] POST /api/quiz/ce17bc4d737d46e9834b12be6b7f98cd/submit/ HTTP/1.0***0.244***
-[29/May/2024:23:28:28 +0530] POST /api/quiz/7fbb75dc95d1463dbf1a47abdda15e0f/submit/ HTTP/1.0***0.240***
-[29/May/2024:23:28:29 +0530] POST /api/quiz/7095b741d9244db9a1ab6b05deecd093/submit/ HTTP/1.0***0.230***
-[29/May/2024:23:28:29 +0530] POST /api/quiz/e1ac0d7cdaf44ac59ead6f8aae4ffe27/submit/ HTTP/1.0***0.231***
-[29/May/2024:23:28:30 +0530] POST /api/quiz/6de0c6d392d94860b0df703b9b187462/submit/ HTTP/1.0***0.147***
-[29/May/2024:23:28:30 +0530] POST /api/quiz/5a04067cd4aa40f3a102920b43bbe608/submit/ HTTP/1.0***0.147***

@@ -1,5 +1,0 @@
-Method,Name,Error,Occurrences
-GET,6.quiz_authenticate,HTTPError('401 Client Error: Unauthorized for url: 6.quiz_authenticate'),100
-GET,3.quiz_list,HTTPError('401 Client Error: Unauthorized for url: 3.quiz_list'),100
-GET,2.course_list,HTTPError('401 Client Error: Unauthorized for url: 2.course_list'),100
-GET,5.quiz_download,HTTPError('401 Client Error: Unauthorized for url: 5.quiz_download'),100
