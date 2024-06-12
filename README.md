@@ -120,7 +120,7 @@ $ python3 server_end_script.py
 * install docker if not present
 #### Build the docker container
 ```
-$ docker build -t <image_name>
+$ docker build -t <image_name>.
 ```
 
 #### Run the script using the docker container
