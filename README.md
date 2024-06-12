@@ -52,6 +52,23 @@ HTTP_PORT=5002
     }
 ]
 ```
+### Registering api_perf_check endpoint(Perf-marker API)
+* make sure to register the below code as an api end point in your web application at path: <host_name>/api_perf_check/<test_id>/<num_users>
+* e.g for django framework
+```
+urlpatterns = [
+path('api_perf_check/<str:test_id-START/END>/<int:num_users>/', views.Perf-marker, name='sys_perf_check'),
+    # Other URL patterns...
+]
+```
+* e.g for python shown below
+```
+# 
+def Perf-marker(request,test_id,numuser):
+    # for readability new function name
+    return HttpResponse("the time taken to execute the test "+test_id+" is "+str(res)+" miliseconds for "+numuser+ " users")
+```
+
 
 ### Logs
 * turn on the logs for the component mentioned in components.json
