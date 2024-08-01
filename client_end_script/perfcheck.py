@@ -1,3 +1,4 @@
+# import sys
 from locust import HttpUser,SequentialTaskSet,task,constant,events
 from locust.exception import StopUser
 from client_end_script_helper import read_config
@@ -26,16 +27,24 @@ class PerfCheck(SequentialTaskSet):
         self.client.cookies.clear()
         url="api/account/login/"
         data={
-            "email_id":self.email,"passcode":self.password
+            "email_id":self.email,
+            "anonymous_token":"eyJhbGciOiJSUzI1NiIsImtpZCI6IjFkYmUwNmI1ZDdjMmE3YzA0NDU2MzA2MWZmMGZlYTM3NzQwYjg2YmMiLCJ0eXAiOiJKV1QifQ.eyJwcm92aWRlcl9pZCI6ImFub255bW91cyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9zYWZlLXYyLXNlcnZlciIsImF1ZCI6InNhZmUtdjItc2VydmVyIiwiYXV0aF90aW1lIjoxNzIyNTA2Mjk0LCJ1c2VyX2lkIjoiYkhldTNiWUs5Uk85WmxGbUJUa3RDVEVrZURuMSIsInN1YiI6ImJIZXUzYllLOVJPOVpsRm1CVGt0Q1RFa2VEbjEiLCJpYXQiOjE3MjI1MDYyOTQsImV4cCI6MTcyMjUwOTg5NCwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6e30sInNpZ25faW5fcHJvdmlkZXIiOiJhbm9ueW1vdXMifX0.ZFqZsnIVngd8fhCjFXNFWPLdrizzjYTR3_ekwZoGLFs5k1tt4g5F6flEA39qF7s0ALVLIvLYPUusaF9gXxB5_oDOwcAfhB8dUBIWOCHeAsaG56PCldXXuRT7MIlUyw4gqet8s_Oc894DnLGvNsykBxsGLKyzplxvXDNu3helGRnDVQutJ4ylbXa8cVfVQV78DFkmpvDzWLyGjyKj3bNCAC5eY_1qTkDCX3eyLhhfeav2ZeKBYSF8Z7TzBkMs2usZOD-Nh8CWVS1-OqB9jYARUKowWsNluMDpMCmWMGRKJtWWi_K2xlSfSh3CMLiWhjoqZByXasqOKlCSzHlKfZn9cg",
+            "device_reg_token":"dWwDz1OTSkugCctvOhsRi5:APA91bFvcYQxj2BwhuPq9hMB6rVarSFeBFkliwLV21cD0T1e4Xj3cP5XgtYDT77xXDRyC6VCDE8ijPm2eOaIooklDFcixdEzcZUY6IatWjQZPi_6Ssmfwf3w67zvDhNNPdgsYHW_Yv5h",
+            "passcode":self.password,
+            "version":"a2.9.42",
         }
         with self.client.post(url,name="1.login",data=data,catch_response=True) as response:
             print("login:",response)
+            # print(f"login: {response}", file=sys.stderr)
             self.csrftoken = response.cookies['csrftoken']
 
     @task
     def course_list(self):
         url ="api/course/"
-        with self.client.get(url,name="2.course_list",catch_response=True) as response:
+        data = {
+            "version":"a2.9.42",
+        }
+        with self.client.get(url,name="2.course_list",data=data,catch_response=True) as response:
             # print("course_list:",response.text)
             print("course_list:",response)
             self.code = coursecode
@@ -44,14 +53,20 @@ class PerfCheck(SequentialTaskSet):
     @task
     def quiz_list(self):
         url = "api/quiz/"+ self.code + "/downloadable-quizzes/"
-        with self.client.get(url,name="3.quiz_list",catch_response=True) as response:
+        data = {
+            "version":"a2.9.42",
+        }
+        with self.client.get(url,name="3.quiz_list",data=data,catch_response=True) as response:
             # print("quiz_list:",response.text)
             print("quiz_list:",response)
 
     @task
     def quiz_info(self):
         url = "api/quiz/"+ self.codeid + "/info/"
-        with self.client.get(url,name="4.quiz_info",catch_response=True) as response:
+        data = {
+            "version":"a2.9.42",
+        }
+        with self.client.get(url,name="4.quiz_info",data=data,catch_response=True) as response:
             quiz_keystate = re.search(r"\"keystate\":(.*?)(,|})",response.text)
             self.quiz_keystate= quiz_keystate.group(1)[1:-1] #.encode('ascii')
             print("quiz_keystate:",self.quiz_keystate)
@@ -66,7 +81,10 @@ class PerfCheck(SequentialTaskSet):
     @task
     def quiz_authenticate(self):
         url = "api/quiz/"+ self.codeid + "/authenticate/"
-        with self.client.get(url,name="6.quiz_authenticate",catch_response=True) as response:
+        data = {
+            "version":"a2.9.42",
+        }
+        with self.client.get(url,name="6.quiz_authenticate",data=data,catch_response=True) as response:
             print("quiz_authenticate:",response)
 
     # @task
