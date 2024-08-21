@@ -1,55 +1,77 @@
-#!/usr/bin/env python3
-
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Directory where the collected CSVs are stored
-csv_dir = './collected_csvs'
+# Directory containing the CSV files
+directory = "./collected_csvs"
 
-# Dictionary to store data
-data = {}
-num_users_list = []
+# Initialize dictionaries to hold the data
+average_response_times = {}
+failure_counts = {}
+num_users_set = set()
 
-# Loop through each CSV file in the directory
-for csv_file in os.listdir(csv_dir):
-    if csv_file.endswith('_stats.csv'):
-        # Extract the number of users from the filename
-        num_users = int(csv_file.split('_')[0])
-        num_users_list.append(num_users)
+# Extract data from each CSV file
+for filename in os.listdir(directory):
+    if filename.endswith("_stats.csv"):
+        num_users = int(filename.split('_')[0])  # Extract the number of users from the filename
+        num_users_set.add(num_users)  # Collect num_users for xticks
+        file_path = os.path.join(directory, filename)
         
         # Read the CSV file
-        df = pd.read_csv(os.path.join(csv_dir, csv_file))
+        df = pd.read_csv(file_path)
         
-        # Loop through each row in the dataframe to extract the API name and average response time
-        for _, row in df.iterrows():
+        # Filter out the 'Aggregated' row
+        df = df[df['Name'] != 'Aggregated']
+        
+        # Extract the API names, average response times, and failure counts
+        for index, row in df.iterrows():
             api_name = row['Name']
             avg_response_time = row['Average Response Time']
+            failure_count = row['Failure Count']
             
-            # Skip the "Aggregated" row
-            if pd.notna(api_name) and api_name != "Aggregated":  # Ensure the API name is not NaN and not "Aggregated"
-                if api_name not in data:
-                    data[api_name] = []
-                data[api_name].append((num_users, avg_response_time))
+            # Store average response times
+            if api_name not in average_response_times:
+                average_response_times[api_name] = []
+            average_response_times[api_name].append((num_users, avg_response_time))
+            
+            # Store failure counts
+            if api_name not in failure_counts:
+                failure_counts[api_name] = []
+            failure_counts[api_name].append((num_users, failure_count))
 
-# Plotting the data
+# Sort the num_users for xticks
+sorted_num_users = sorted(num_users_set)
+
+# Plot average response times
 plt.figure(figsize=(10, 6))
-for api_name, values in data.items():
-    values.sort()  # Sort values by number of users
-    users, response_times = zip(*values)
-    plt.plot(users, response_times, marker='o', label=api_name)
+plt.title("Average Response Time vs. Number of Users")
+for api_name, data in average_response_times.items():
+    data.sort()  # Sort by num_users
+    num_users = [item[0] for item in data]
+    avg_response_time = [item[1] for item in data]
+    plt.plot(num_users, avg_response_time, marker='o', label=api_name)
 
-# Adding labels and title
-plt.xlabel('Number of Users')
-plt.ylabel('Average Response Time (ms)')
-plt.title('Average Response Time vs Number of Users')
-
-# Setting xticks dynamically based on num_users_list
-plt.xticks(sorted(num_users_list))
-
-# Adding grid and legend
-plt.grid(True)
+plt.xlabel("Number of Users")
+plt.ylabel("Average Response Time (ms)")
+plt.xticks(sorted_num_users)
 plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.savefig('average_response_time_plot.png')
 
-# Save the plot to a file
-plt.savefig('api_performance_plot.png')
+# Plot failure counts
+plt.figure(figsize=(10, 6))
+plt.title("Failure Count vs. Number of Users")
+for api_name, data in failure_counts.items():
+    data.sort()  # Sort by num_users
+    num_users = [item[0] for item in data]
+    failure_count = [item[1] for item in data]
+    plt.plot(num_users, failure_count, marker='o', label=api_name)
+
+plt.xlabel("Number of Users")
+plt.ylabel("Failure Count")
+plt.xticks(sorted_num_users)
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.savefig('failure_count_plot.png')
