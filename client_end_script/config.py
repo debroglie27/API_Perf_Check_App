@@ -8,4 +8,4 @@ SEARCH_LINES_LIMIT=200000
 COMPARE_WITH_PREV_ENTRIES = (1,2,3)
 
 RESULT_PORT = 5500 # just for reference dont change it
-RUN_TIME = 40 # configurable as per number of users and ramp up
+RUN_TIME = 30 # configurable as per number of users and ramp up

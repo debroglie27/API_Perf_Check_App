@@ -1,0 +1,8 @@
+API_name,RespTime_11(ms),RespTime_22(ms),RespTime_33(ms),RespTime_40(ms),RespTime_50(ms),RespTime_60(ms),RespTime_70(ms),RespTime_80(ms),RespTime_90(ms),RespTime_100(ms)
+login,651,702,656,660,699,643,639,686,643,637
+course_list,30,28,27,26,26,24,23,23,24,24
+quiz_list,120,263,153,146,270,167,183,209,175,167
+quiz_info,289,370,293,289,307,274,279,323,274,275
+quiz_download,29,28,27,26,26,26,25,25,25,25
+quiz_authenticate,79,134,192,88,119,100,96,106,127,108
+quiz_submit,38,39,36,35,36,35,36,36,36,35

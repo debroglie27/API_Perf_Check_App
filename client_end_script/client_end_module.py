@@ -19,6 +19,6 @@ if __name__ == '__main__':
     create_test_directory(test_id)
     performance_test(number_of_users,ramp_up, test_id)
     get_server_logs(test_id)
-    # extract_historical_data(test_id)
-    # showgui()
+    extract_historical_data(test_id)
+    #showgui()
     

@@ -1,10 +1,5 @@
 [
     {
-        "componentName":"outer-nginx",
-        "logPath":"/var/log/nginx/safev2.cse-proxy-access.log",
-        "timeUnit":"s"
-    },
-    {
         "componentName":"inner-nginx",
         "logPath":"/home/safev2admin/kashmira/safe_server_v2/logs/inner-nginx/safe-access.log",
         "timeUnit":"s"
@@ -15,6 +10,4 @@
         "timeUnit":"ms"
     }
 ]
-
-
 

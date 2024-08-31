@@ -1,77 +1,45 @@
-import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Directory containing the CSV files
-directory = "./collected_csvs"
+# Sample data
+data = {
+    'API_name': ['login', 'course_list', 'quiz_list', 'quiz_info', 'quiz_download', 'quiz_authenticate', 'quiz_submit'],
+    'RespTime_11(ms)': [651, 30, 120, 289, 29, 79, 38],
+    'RespTime_22(ms)': [702, 28, 263, 370, 28, 134, 39],
+    'RespTime_33(ms)': [656, 27, 153, 293, 27, 192, 36],
+    'RespTime_40(ms)': [660, 26, 146, 289, 26, 88, 35],
+    'RespTime_50(ms)': [699, 26, 270, 307, 26, 119, 36],
+    'RespTime_60(ms)': [643, 24, 167, 274, 26, 100, 35],
+    'RespTime_70(ms)': [639, 23, 183, 279, 25, 96, 36],
+    'RespTime_80(ms)': [686, 23, 209, 323, 25, 106, 36],
+    'RespTime_90(ms)': [643, 24, 175, 274, 25, 127, 36],
+    'RespTime_100(ms)': [637, 24, 167, 275, 25, 108, 35]
+}
 
-# Initialize dictionaries to hold the data
-average_response_times = {}
-failure_counts = {}
-num_users_set = set()
+# Convert to DataFrame
+df = pd.DataFrame(data)
 
-# Extract data from each CSV file
-for filename in os.listdir(directory):
-    if filename.endswith("_stats.csv"):
-        num_users = int(filename.split('_')[0])  # Extract the number of users from the filename
-        num_users_set.add(num_users)  # Collect num_users for xticks
-        file_path = os.path.join(directory, filename)
-        
-        # Read the CSV file
-        df = pd.read_csv(file_path)
-        
-        # Filter out the 'Aggregated' row
-        df = df[df['Name'] != 'Aggregated']
-        
-        # Extract the API names, average response times, and failure counts
-        for index, row in df.iterrows():
-            api_name = row['Name']
-            avg_response_time = row['Average Response Time']
-            failure_count = row['Failure Count']
-            
-            # Store average response times
-            if api_name not in average_response_times:
-                average_response_times[api_name] = []
-            average_response_times[api_name].append((num_users, avg_response_time))
-            
-            # Store failure counts
-            if api_name not in failure_counts:
-                failure_counts[api_name] = []
-            failure_counts[api_name].append((num_users, failure_count))
+# Extract the number of users from column names
+user_counts = [11, 22, 33, 40, 50, 60, 70, 80, 90, 100]
 
-# Sort the num_users for xticks
-sorted_num_users = sorted(num_users_set)
+# Set the API_name as index
+df.set_index('API_name', inplace=True)
 
-# Plot average response times
-plt.figure(figsize=(10, 6))
-plt.title("Average Response Time vs. Number of Users")
-for api_name, data in average_response_times.items():
-    data.sort()  # Sort by num_users
-    num_users = [item[0] for item in data]
-    avg_response_time = [item[1] for item in data]
-    plt.plot(num_users, avg_response_time, marker='o', label=api_name)
+# Plot
+plt.figure(figsize=(12, 8))
+for api_name in df.index:
+    plt.plot(user_counts, df.loc[api_name], marker='o', label=api_name)
 
-plt.xlabel("Number of Users")
-plt.ylabel("Average Response Time (ms)")
-plt.xticks(sorted_num_users)
-plt.legend()
+plt.xlabel('Number of Users')
+plt.ylabel('Average Response Time (ms)')
+plt.title('Average Response Times by Number of Users')
+plt.legend(title='API Name')
 plt.grid(True)
+plt.xticks(user_counts)
 plt.tight_layout()
-plt.savefig('average_response_time_plot.png')
 
-# Plot failure counts
-plt.figure(figsize=(10, 6))
-plt.title("Failure Count vs. Number of Users")
-for api_name, data in failure_counts.items():
-    data.sort()  # Sort by num_users
-    num_users = [item[0] for item in data]
-    failure_count = [item[1] for item in data]
-    plt.plot(num_users, failure_count, marker='o', label=api_name)
+# Save the plot as an image file
+plt.savefig('response_times_plot.png')
 
-plt.xlabel("Number of Users")
-plt.ylabel("Failure Count")
-plt.xticks(sorted_num_users)
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.savefig('failure_count_plot.png')
+# Show the plot
+# plt.show()
