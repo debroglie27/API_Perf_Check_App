@@ -20,8 +20,12 @@ def plot_response_times(csv_file, title, output_file):
     plt.ylabel('Response Time (ms)')
     plt.legend(title="API", bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.grid(True)
-    plt.tight_layout()
+
+    # Set the x-ticks to be the number of users
+    plt.xticks(num_users)
     
+    plt.tight_layout()
+
     # Save the plot to the specified output file
     plt.savefig(output_file)
     plt.close()  # Close the figure to free memory
