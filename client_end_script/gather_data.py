@@ -3,14 +3,16 @@ import re
 import glob
 import pandas as pd
 
-# Define a pattern to match response times
-response_time_pattern = re.compile(r'generated \d+ bytes in (\d+) msecs')
+# Define patterns for both formats
+response_time_pattern_uwsgi = re.compile(r'generated \d+ bytes in (\d+) msecs')
+response_time_pattern_nginx = re.compile(r'\*\*\*(\d+\.\d+)\*\*\*')
 
-def average_response_time(file_path):
+def average_response_time_uwsgi(file_path):
+    """Parse uwsgi logs and calculate the average response time in milliseconds."""
     response_times = []
     with open(file_path, 'r') as file:
         for line in file:
-            match = response_time_pattern.search(line)
+            match = response_time_pattern_uwsgi.search(line)
             if match:
                 response_times.append(int(match.group(1)))
     if response_times:
@@ -18,8 +20,22 @@ def average_response_time(file_path):
     else:
         return None
 
+def average_response_time_nginx(file_path):
+    """Parse nginx logs and calculate the average response time in milliseconds."""
+    response_times = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            match = response_time_pattern_nginx.search(line)
+            if match:
+                response_time_sec = float(match.group(1))  # Get time in seconds
+                response_times.append(int(response_time_sec * 1000))  # Convert to milliseconds
+    if response_times:
+        return round(sum(response_times) / len(response_times))  # Round to nearest integer
+    else:
+        return None
+
 def calculate_num_users_from_logs(log_folder):
-    """Estimate number of users based on the number of lines in one log file."""
+    """Estimate the number of users based on the number of lines in one log file."""
     log_files = glob.glob(os.path.join(log_folder, "*.logs"))
     if log_files:
         first_log_file = log_files[0]  # Choose the first log file found
@@ -31,15 +47,16 @@ def calculate_num_users_from_logs(log_folder):
             print(f"Error reading file {first_log_file}: {e}")
     return None
 
-def find_uwsgi_folder(base_folder):
-    """Find the uwsgi folder that starts with 'uwsgi' and ensure it's a directory."""
-    uwsgi_folders = glob.glob(os.path.join(base_folder, "uwsgi*"))
-    for folder in uwsgi_folders:
+def find_folder(base_folder, prefix):
+    """Find a folder that starts with the given prefix and ensure it's a directory."""
+    folders = glob.glob(os.path.join(base_folder, f"{prefix}*"))
+    for folder in folders:
         if os.path.isdir(folder):
             return folder
     return None
 
-def process_folder(folder_path):
+def process_folder(folder_path, prefix):
+    """Process a folder to gather response times for either uwsgi or nginx logs."""
     log_files = {
         "1.login.logs": "login",
         "2.course_list.logs": "course_list",
@@ -50,22 +67,26 @@ def process_folder(folder_path):
         "7.quiz_submit.logs": "quiz_submit"
     }
 
-    uwsgi_folder = find_uwsgi_folder(folder_path)
-    if not uwsgi_folder:
-        print(f"No valid 'uwsgi' folder found in {folder_path}")
+    target_folder = find_folder(folder_path, prefix)
+    if not target_folder:
+        print(f"No valid '{prefix}' folder found in {folder_path}")
         return None
 
     # Calculate the number of users based on one log file
-    num_users = calculate_num_users_from_logs(uwsgi_folder)
+    num_users = calculate_num_users_from_logs(target_folder)
     if num_users is None:
         print(f"Unable to determine number of users for folder {folder_path}")
         return None
 
     results = {api_name: None for api_name in log_files.values()}
     for log_file, api_name in log_files.items():
-        file_path = os.path.join(uwsgi_folder, log_file)
+        file_path = os.path.join(target_folder, log_file)
         if os.path.isfile(file_path):
-            avg_response_time = average_response_time(file_path)
+            if prefix == "uwsgi":
+                avg_response_time = average_response_time_uwsgi(file_path)
+            else:  # For inner-nginx logs
+                avg_response_time = average_response_time_nginx(file_path)
+            
             if avg_response_time is not None:
                 results[api_name] = avg_response_time
             else:
@@ -75,17 +96,14 @@ def process_folder(folder_path):
     results['Number of Users'] = num_users
     return results
 
-def main():
-    # Find all "2024" folders in the current directory
-    base_path = os.getcwd()  # Current working directory
-    folders = glob.glob(os.path.join(base_path, "2024*"))
-
+def process_and_save_results(folders, prefix, output_filename):
+    """Process folders and save the results in a CSV file for either uwsgi or nginx."""
     all_results = []
     for folder in folders:
-        results = process_folder(folder)
+        results = process_folder(folder, prefix)
         if results:
             all_results.append(results)
-            print(f"Processed folder {folder}: {results}")
+            print(f"Processed folder {folder} for {prefix}: {results}")
 
     # Collect all unique number of users and sort them
     user_counts = sorted(set(result['Number of Users'] for result in all_results))
@@ -108,10 +126,27 @@ def main():
 
     # Convert to DataFrame
     df = pd.DataFrame(df_data, columns=columns)
-    print("DataFrame:")
+    
+    # Ensure the directory "consolidated_results" exists
+    os.makedirs('consolidated_results', exist_ok=True)
+    
+    # Save the CSV file in the "consolidated_results" folder
+    output_path = os.path.join('consolidated_results', output_filename)
+    print(f"DataFrame for {prefix}:")
     print(df)  # Print DataFrame to check values before saving
-    df.to_csv('response_times_summary.csv', index=False)
-    print("Results have been saved to 'response_times_summary.csv'.")
+    df.to_csv(output_path, index=False)
+    print(f"Results have been saved to '{output_path}'.")
+
+def main():
+    # Find all "2024" folders in the current directory
+    base_path = os.getcwd()  # Current working directory
+    folders = glob.glob(os.path.join(base_path, "2024*"))
+
+    # Process and save results for "uwsgi"
+    process_and_save_results(folders, "uwsgi", 'uwsgi_response_times_summary.csv')
+
+    # Process and save results for "inner-nginx"
+    process_and_save_results(folders, "inner-nginx", 'nginx_response_times_summary.csv')
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Array of user numbers and ramp-up rates
-USER_NUMBERS=(10 20 30 40 50 60 70 80 90 100)
+USER_NUMBERS=(100 90 80 70 60 50 40 30 20 10)
 RAMP_UP_RATE=0.1
 
 # Run the performance script for each number of users
@@ -33,6 +33,21 @@ for folder in 2024*/; do
         echo "Permissions changed to 777 for $uwsgi_folder"
       else
         echo "No uwsgi folder found in $folder"
+      fi
+    done
+    
+    # Loop through subfolders starting with "uwsgi" within the "2024" folder
+    for nginx_folder in "$folder"inner-nginx*/; do
+      # Check if it is a directory
+      if [ -d "$nginx_folder" ]; then
+        echo "Found inner-nginx folder: $nginx_folder"
+
+        # Apply chmod 777 to the uwsgi folder
+        sudo chmod -R 777 "$nginx_folder"
+
+        echo "Permissions changed to 777 for $nginx_folder"
+      else
+        echo "No inner-nginx folder found in $folder"
       fi
     done
   else

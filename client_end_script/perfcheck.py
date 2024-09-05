@@ -8,10 +8,10 @@ from CourseCode import coursecode
 from TestName import quizid
 import re
 import datetime
-import logging
+# import logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
 
 test_id,num_user=read_config()
 class PerfCheck(SequentialTaskSet):
@@ -29,7 +29,7 @@ class PerfCheck(SequentialTaskSet):
             "passcode":self.password,
         }
         with self.client.post(url,name="1.login",data=data,catch_response=True) as response:
-            logger.info(f"login request: {response}")
+            # logger.info(f"login request: {response}")
             # print(f"login: {response}", file=sys.stderr)
             self.csrftoken = response.cookies['csrftoken']
 
