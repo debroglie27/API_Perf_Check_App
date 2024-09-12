@@ -3,58 +3,19 @@
 # Array of user numbers and ramp-up rates
 USER_NUMBERS=(100 90 80 70 60 50 40 30 20 10)
 RAMP_UP_RATE=0.1
+DURATIONS=(40 35 35 30 30 25 25 20 15 10)
 
 # Run the performance script for each number of users
-for num_users in "${USER_NUMBERS[@]}"; do
-    echo "Performance Script running for $num_users users and $RAMP_UP_RATE ramp_up rate"
-    sudo docker run --rm -p 5500:5500 -v $(pwd):/app api_perf_check_app python3 client_end_module.py -l $num_users -r $RAMP_UP_RATE
+for i in "${!USER_NUMBERS[@]}"; do
+    num_users=${USER_NUMBERS[$i]}
+    duration=${DURATIONS[$i]}
+    
+    echo "Performance Script running for $num_users users, $RAMP_UP_RATE ramp-up rate, and $duration seconds duration"
+    python3 client_end_module.py -l $num_users -r $RAMP_UP_RATE -t $duration
+    rm *.tar.gz
+
     echo "Waiting for 1 second before the next run..."
     sleep 1
 done
-
-echo "Performance Scripts Done."
-
-
-# Loop through all folders starting with "2024" in the current directory
-for folder in 2024*/; do
-  # Check if it is a directory
-  if [ -d "$folder" ]; then
-    echo "Found directory: $folder"
-
-    # Loop through subfolders starting with "uwsgi" within the "2024" folder
-    for uwsgi_folder in "$folder"uwsgi*/; do
-      # Check if it is a directory
-      if [ -d "$uwsgi_folder" ]; then
-        echo "Found uwsgi folder: $uwsgi_folder"
-
-        # Apply chmod 777 to the uwsgi folder
-        sudo chmod -R 777 "$uwsgi_folder"
-
-        echo "Permissions changed to 777 for $uwsgi_folder"
-      else
-        echo "No uwsgi folder found in $folder"
-      fi
-    done
-    
-    # Loop through subfolders starting with "uwsgi" within the "2024" folder
-    for nginx_folder in "$folder"inner-nginx*/; do
-      # Check if it is a directory
-      if [ -d "$nginx_folder" ]; then
-        echo "Found inner-nginx folder: $nginx_folder"
-
-        # Apply chmod 777 to the uwsgi folder
-        sudo chmod -R 777 "$nginx_folder"
-
-        echo "Permissions changed to 777 for $nginx_folder"
-      else
-        echo "No inner-nginx folder found in $folder"
-      fi
-    done
-  else
-    echo "$folder is not a directory or does not exist."
-  fi
-done
-
-sudo rm -rf *.tar.gz
 
 echo "All Done."

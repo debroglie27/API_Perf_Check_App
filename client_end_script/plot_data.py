@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
 
 def plot_response_times(csv_file, title, output_file):
     # Load the CSV data into a DataFrame
@@ -31,7 +30,7 @@ def plot_response_times(csv_file, title, output_file):
     plt.close()  # Close the figure to free memory
 
 # Save the plot for uwsgi
-plot_response_times('uwsgi_response_times_summary.csv', 'UWSGI API Response Times', 'uwsgi_response_times_plot.png')
+plot_response_times('consolidated_results/uwsgi_response_times_summary.csv', 'UWSGI API Response Times', 'consolidated_results/uwsgi_response_times_plot.png')
 
 # Save the plot for nginx
-plot_response_times('nginx_response_times_summary.csv', 'Nginx API Response Times', 'nginx_response_times_plot.png')
+plot_response_times('consolidated_results/nginx_response_times_summary.csv', 'Nginx API Response Times', 'consolidated_results/nginx_response_times_plot.png')
