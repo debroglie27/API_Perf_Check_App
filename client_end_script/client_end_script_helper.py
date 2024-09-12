@@ -1,7 +1,6 @@
 import os,json,subprocess,argparse,socket,requests
 from datetime import datetime
 from ftplib import FTP
-# from configparser import ConfigParser
 from math import ceil
 from config import LOG_HOST,TEST_SERVER_HOST,SEARCH_LINES_LIMIT,FTP_SERVER_PORT,SERVER_DAEMON_PORT
 

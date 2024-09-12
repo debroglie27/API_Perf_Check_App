@@ -5,4 +5,7 @@ FTP_SERVER_PORT=5001
 SEARCH_LINES_LIMIT=200000
 
 RESULT_PORT = 5500 # just for reference dont change it
-# RUN_TIME = 10 # configurable as per number of users and ramp up
+
+# Scalability Analysis:
+#          - Processes (5): 177
+#          - Processes (24): 112
