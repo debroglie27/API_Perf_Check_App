@@ -1,10 +1,10 @@
 from locust import HttpUser,SequentialTaskSet,task,constant
 from locust.exception import StopUser
-from config import TEST_SERVER_HOST
-from credentials import *
-from Answers import *
-from CourseCode import coursecode
-from TestName import quizid
+from settings.config import TEST_SERVER_HOST
+from settings.credentials import USER_CREDENTIALS
+from settings.Answers import answers
+from settings.CourseCode import coursecode
+from settings.TestName import quizid
 import re
 import datetime
 

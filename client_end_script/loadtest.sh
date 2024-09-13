@@ -12,7 +12,6 @@ for i in "${!USER_NUMBERS[@]}"; do
     
     echo "Performance Script running for $num_users users, $RAMP_UP_RATE ramp-up rate, and $duration seconds duration"
     python3 client_end_module.py -l $num_users -r $RAMP_UP_RATE -t $duration
-    rm *.tar.gz
 
     echo "Waiting for 1 second before the next run..."
     sleep 1

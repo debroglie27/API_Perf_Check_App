@@ -2,11 +2,11 @@ import os,json,subprocess,argparse,socket,requests
 from datetime import datetime
 from ftplib import FTP
 from math import ceil
-from config import LOG_HOST,TEST_SERVER_HOST,SEARCH_LINES_LIMIT,FTP_SERVER_PORT,SERVER_DAEMON_PORT
+from settings.config import LOG_HOST,TEST_SERVER_HOST,SEARCH_LINES_LIMIT,FTP_SERVER_PORT,SERVER_DAEMON_PORT
 
 
 def extract_api_specific_logs(filename,dirname):
-    with open('APIs.json','r') as f:
+    with open('settings/APIs.json','r') as f:
         api_info = json.load(f)
     if not os.path.exists(dirname):
         os.mkdir(dirname)
@@ -16,13 +16,12 @@ def extract_api_specific_logs(filename,dirname):
 
 
 def extract_data(test_id):
-    os.chdir(str(test_id))
-    with open('components.json','r') as f:
+    with open('settings/components.json','r') as f:
         components_info = json.load(f)
     
     for item in components_info:
-        filename=item["componentName"]+"-"+test_id+".log"
-        dirname=item["componentName"]+"-"+test_id
+        filename=test_id+"/"+item["componentName"]+"-"+test_id+".log"
+        dirname=test_id+"/"+item["componentName"]
 
         extract_api_specific_logs(filename,dirname)
     
@@ -69,12 +68,15 @@ def command_line_args_apc():
 
 
 def get_server_logs(test_id):
-    num_lines_extract= SEARCH_LINES_LIMIT
-    client_run(test_id,LOG_HOST,num_lines_extract)
-    extract_file = str(test_id)+ ".tar.gz"
-    subprocess.run(["tar","-xvzf",extract_file])
-    subprocess.run(['cp','components.json',test_id])
-    subprocess.run(['cp','APIs.json',test_id])
+    num_lines_extract = SEARCH_LINES_LIMIT
+    client_run(test_id, LOG_HOST, num_lines_extract)
+    
+    # Extract the .tar.gz file
+    extract_file = str(test_id) + ".tar.gz"
+    subprocess.run(["tar", "-xvzf", extract_file])
+    
+    # Remove the .tar.gz file after extraction
+    subprocess.run("rm *.tar.gz", shell=True)
 
 
 def client_run(testName,logHost,numLinesExtract):
