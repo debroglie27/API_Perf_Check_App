@@ -1,6 +1,6 @@
-locust
-matplotlib
-pandas
-Pillow
-numpy
-requests
+locust==2.31.5
+matplotlib==3.9.2
+pandas==2.2.2
+Pillow==10.4.0
+numpy==2.1.1
+requests==2.32.3
