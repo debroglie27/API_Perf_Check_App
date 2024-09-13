@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Array of user numbers and ramp-up rates
-USER_NUMBERS=(100 90 80 70 60 50 40 30 20 10)
+USER_NUMBERS=(150 140 130 120 110 100 90 80 70 60 50 40 30 20 10)
 RAMP_UP_RATE=0.1
-DURATIONS=(40 35 35 30 30 25 25 20 15 10)
+DURATIONS=(30 30 30 30 30 25 25 25 25 25 21 20 20 20 20)
 
 # Run the performance script for each number of users
 for i in "${!USER_NUMBERS[@]}"; do
