@@ -49,7 +49,7 @@ def calculate_num_users_from_logs(log_folder):
 
 def find_folder(base_folder, prefix):
     """Find a folder that starts with the given prefix and ensure it's a directory."""
-    folders = glob.glob(os.path.join(base_folder, f"{prefix}*"))
+    folders = glob.glob(os.path.join(base_folder, f"{prefix}"))
     for folder in folders:
         if os.path.isdir(folder):
             return folder

@@ -1,11 +1,8 @@
-LOG_HOST="10.129.7.11"
-TEST_SERVER_HOST="https://safev2.cse.iitb.ac.in/"
+IP_ADDRESS="192.168.40.146"
+LOG_HOST=IP_ADDRESS
+TEST_SERVER_HOST=f"http://{IP_ADDRESS}:8080/"
 SERVER_DAEMON_PORT=5000
 FTP_SERVER_PORT=5001
 SEARCH_LINES_LIMIT=200000
 
 RESULT_PORT = 5500 # just for reference dont change it
-
-# Scalability Analysis:
-#          - Processes (5): 177
-#          - Processes (24): 112

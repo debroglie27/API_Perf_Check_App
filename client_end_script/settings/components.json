@@ -1,12 +1,12 @@
 [
     {
         "componentName":"inner-nginx",
-        "logPath":"/home/safev2admin/kashmira/safe_server_v2/logs/inner-nginx/safe-access.log",
+        "logPath":"/home/pi/safe_server_v2/logs/inner-nginx/safe-access.log",
         "timeUnit":"s"
     },
     {
         "componentName":"uwsgi",
-        "logPath":"/home/safev2admin/kashmira/safe_server_v2/logs/uwsgi/uwsgi-daemonize.log",
+        "logPath":"/home/pi/safe_server_v2/logs/uwsgi/uwsgi-daemonize.log",
         "timeUnit":"ms"
     }
 ]

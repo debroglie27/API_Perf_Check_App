@@ -1,12 +1,13 @@
 import requests
 import json
 import subprocess
+from settings.config import TEST_SERVER_HOST
 
 # Define the login URL and login credentials
-host = "https://safev2.cse.iitb.ac.in/"
+host = TEST_SERVER_HOST
 login_url = host+"account/login/"
-username = "debajyotisaha1998@gmail.com"
-password = "hagu@123"
+username = "arijeet_de@noemail.com"
+password = "#Arijeet@27"
 
 
 def login_and_publish_quiz():
@@ -43,7 +44,7 @@ def login_and_publish_quiz():
         "start_time":"T",
         "end_time":"T",
     }
-    publish_quiz_url = host+"web_api/quiz/19317/publish-quiz/"
+    publish_quiz_url = host+"web_api/quiz/1/publish-quiz/"
     publish_quiz_response = session.post(publish_quiz_url,data=publish_data)
     print(publish_quiz_response.text)
     publish_response=json.loads(publish_quiz_response.text)
@@ -65,9 +66,9 @@ def login_and_publish_quiz():
 
 
 def set_test_name(quiz_uuid):
-    command = f"echo {quiz_uuid} | python3 settings/TestName.py"
+    command = f"echo {quiz_uuid} | python3 TestName.py"
     subprocess.run(command,shell=True)
-    print("\nInitial Script over")
+    print("Initial Script over")
 
 if __name__ =="__main__":
     set_test_name(login_and_publish_quiz())
