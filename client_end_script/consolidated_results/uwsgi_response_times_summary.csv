@@ -1,8 +1,8 @@
-API_name,RespTime_10(ms),RespTime_20(ms),RespTime_30(ms),RespTime_40(ms),RespTime_50(ms),RespTime_60(ms),RespTime_70(ms),RespTime_80(ms),RespTime_90(ms),RespTime_100(ms),RespTime_110(ms),RespTime_120(ms),RespTime_130(ms),RespTime_140(ms),RespTime_150(ms)
-login,642,646,665,673,741,730,704,704,720,747,793,801,865,930,998
-course_list,30,29,29,28,31,29,27,30,28,29,30,29,29,29,28
-quiz_list,166,160,179,185,314,206,236,224,157,174,201,178,144,149,216
-quiz_info,252,257,280,291,654,433,331,321,319,353,403,387,341,335,467
-quiz_download,30,30,28,29,71,28,28,30,30,29,31,29,30,29,30
-quiz_authenticate,80,106,179,120,303,241,269,206,179,192,193,376,172,183,267
-quiz_submit,39,38,64,37,47,37,76,38,38,38,39,38,38,38,44
+API_name,RespTime_5(ms),RespTime_10(ms),RespTime_15(ms),RespTime_20(ms),RespTime_25(ms),RespTime_30(ms),RespTime_35(ms),RespTime_40(ms),RespTime_45(ms),RespTime_50(ms)
+login,981,1010,1054,1098,1143,1128,1238,1187,1261,1245
+course_list,68,88,95,101,108,102,95,94,101,90
+quiz_list,166,191,201,190,206,188,191,177,178,197
+quiz_info,4506,5663,6347,6365,6437,6368,6284,6336,6386,6324
+quiz_download,62,83,79,88,88,98,88,87,91,92
+quiz_authenticate,109,125,150,164,187,201,184,184,188,181
+quiz_submit,75,91,94,109,128,113,126,126,116,122
