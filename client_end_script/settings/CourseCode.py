@@ -1,4 +1,4 @@
-coursecode='CS007'
+coursecode='CS404'
 if __name__=="__main__":
     testname = open("settings/CourseCode.py","r")
     testname.readline()

@@ -66,7 +66,7 @@ def login_and_publish_quiz():
 
 
 def set_test_name(quiz_uuid):
-    command = f"echo {quiz_uuid} | python3 TestName.py"
+    command = f"echo {quiz_uuid} | python3 settings/TestName.py"
     subprocess.run(command,shell=True)
     print("Initial Script over")
 
