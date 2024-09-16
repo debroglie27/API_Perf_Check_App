@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Activate the virtual environment
+source myenv/bin/activate
+
 # Array of user numbers and ramp-up rates
 USER_NUMBERS=(150 140 130 120 110 100 90 80 70 60 50 40 30 20 10)
 RAMP_UP_RATE=0.1
