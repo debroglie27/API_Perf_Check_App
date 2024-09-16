@@ -1,4 +1,5 @@
 answers = [
+    {"question" :36.0,"reason_text":"","response":"1"},
     {"question" :37.0,"reason_text":"","response":"1"},
     {"question" :38.0,"reason_text":"","response":"1"},
     {"question" :39.0,"reason_text":"","response":"1"},
@@ -8,7 +9,7 @@ answers = [
     {"question" :43.0,"reason_text":"","response":"1"},
     {"question" :44.0,"reason_text":"","response":"1"},
     {"question" :45.0,"reason_text":"","response":"1"},
-    {"question" :46.0,"reason_text":"","response":"1"},
+    {"question" :46.0,"reason_text":"","response":"0 1"},
     {"question" :47.0,"reason_text":"","response":"0 1"},
     {"question" :48.0,"reason_text":"","response":"0 1"},
     {"question" :49.0,"reason_text":"","response":"0 1"},
@@ -18,7 +19,7 @@ answers = [
     {"question" :53.0,"reason_text":"","response":"0 1"},
     {"question" :54.0,"reason_text":"","response":"0 1"},
     {"question" :55.0,"reason_text":"","response":"0 1"},
-    {"question" :56.0,"reason_text":"","response":"0 1"},
+    {"question" :56.0,"reason_text":"","response":"3.9"},
     {"question" :57.0,"reason_text":"","response":"3.9"},
     {"question" :58.0,"reason_text":"","response":"3.9"},
     {"question" :59.0,"reason_text":"","response":"3.9"},
@@ -28,5 +29,4 @@ answers = [
     {"question" :63.0,"reason_text":"","response":"3.9"},
     {"question" :64.0,"reason_text":"","response":"3.9"},
     {"question" :65.0,"reason_text":"","response":"3.9"},
-    {"question" :66.0,"reason_text":"","response":"3.9"},
 ]
