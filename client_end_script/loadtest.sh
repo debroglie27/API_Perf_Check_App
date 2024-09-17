@@ -6,7 +6,7 @@ source myenv/bin/activate
 # Array of user numbers and ramp-up rates
 USER_NUMBERS=(50 45 40 35 30 25 20 15 10 5)
 RAMP_UP_RATE=0.1
-DURATIONS=(95 90 85 80 60 50 40 35 25 20)
+DURATIONS=(40 40 30 30 25 25 20 20 20 20)
 
 # Run the performance script for each number of users
 for i in "${!USER_NUMBERS[@]}"; do
