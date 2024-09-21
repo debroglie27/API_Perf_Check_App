@@ -5,7 +5,6 @@ from locust.exception import StopUser
 from settings.config import TEST_SERVER_HOST, COURSE_CODE
 from settings.credentials import USER_CREDENTIALS
 from settings.Answers import answers
-from settings.CourseCode import coursecode
 from settings.TestName import quizid
 
 
