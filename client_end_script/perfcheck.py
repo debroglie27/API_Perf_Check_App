@@ -1,12 +1,11 @@
-from locust import HttpUser,SequentialTaskSet,task,constant
-from locust.exception import StopUser
-from settings.config import TEST_SERVER_HOST
-from settings.credentials import USER_CREDENTIALS
-from settings.Answers import answers
-from settings.CourseCode import coursecode
-from settings.TestName import quizid
 import re
 import datetime
+from locust import HttpUser,SequentialTaskSet,task,constant
+from locust.exception import StopUser
+from settings.config import TEST_SERVER_HOST, COURSE_CODE
+from settings.credentials import USER_CREDENTIALS
+from settings.Answers import answers
+from settings.TestName import quizid
 
 
 class PerfCheck(SequentialTaskSet):
@@ -32,7 +31,7 @@ class PerfCheck(SequentialTaskSet):
         url = "api/course/"
         with self.client.get(url, name="2.course_list", catch_response=True) as response:
             # print(f"course_list: {response}")
-            self.code = coursecode
+            self.code = COURSE_CODE
 
     @task
     def quiz_list(self):
