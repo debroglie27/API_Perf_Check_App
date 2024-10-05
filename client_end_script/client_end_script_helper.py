@@ -118,12 +118,3 @@ def ftp_client(host,testName):
     ftp.login()
     ftp.retrbinary("RETR " +fileName,open(fileName,"wb").write)
     print("log files received")
-
-
-def constructor_script():
-    if os.path.isfile("./initial_script.py"):
-        constructor=["python3","initial_script.py"]
-        subprocess.run(constructor)
-        print("\nInitial_script executed\n")
-    else:
-        print("\nInitial_script not used since it is not specified\n")

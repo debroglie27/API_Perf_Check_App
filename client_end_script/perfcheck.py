@@ -1,17 +1,24 @@
+import os
 import re
 import datetime
 from locust import HttpUser,SequentialTaskSet,task,constant
 from locust.exception import StopUser
-from settings.config import TEST_SERVER_HOST, COURSE_CODE
+from settings.config import TEST_SERVER_HOST, COURSE_CODE, ENV_FILE
 from settings.credentials import USER_CREDENTIALS
 from settings.Answers import answers
-from settings.TestName import quizid
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv(ENV_FILE)
+
+# Retrieve the saved safe_uuid from the .env file
+safe_uuid = os.getenv('SAFE_UUID')
 
 
 class PerfCheck(SequentialTaskSet):
     def __init__(self, parent):
         super().__init__(parent)
-        self.codeid = quizid
+        self.quiz_id = safe_uuid
 
     @task
     def login(self):
@@ -42,7 +49,7 @@ class PerfCheck(SequentialTaskSet):
 
     @task
     def quiz_info(self):
-        url = "api/quiz/" + self.codeid + "/info/"
+        url = "api/quiz/" + self.quiz_id + "/info/"
         with self.client.get(url, name="4.quiz_info", catch_response=True) as response:
             # print(f"quiz_info: {response}")
             quiz_keystate = re.search(r"\"keystate\":(.*?)(,|})", response.text)
@@ -51,14 +58,14 @@ class PerfCheck(SequentialTaskSet):
 
     @task
     def quiz_download(self):
-        url = "api/quiz/" + self.codeid + "/download/"
+        url = "api/quiz/" + self.quiz_id + "/download/"
         with self.client.get(url, name="5.quiz_download", catch_response=True) as response:
             # print(f"quiz_download: {response}")
             pass
 
     @task
     def quiz_authenticate(self):
-        url = "api/quiz/" + self.codeid + "/authenticate/"
+        url = "api/quiz/" + self.quiz_id + "/authenticate/"
         with self.client.get(url, name="6.quiz_authenticate", catch_response=True) as response:
             # print(f"quiz_authenticate: {response}")
             pass

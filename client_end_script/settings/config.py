@@ -8,4 +8,6 @@ SEARCH_LINES_LIMIT=200000
 
 COURSE_CODE="CS404"
 
+ENV_FILE="settings/.env"
+
 RESULT_PORT = 5500 # just for reference dont change it

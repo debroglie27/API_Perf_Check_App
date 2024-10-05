@@ -1,74 +1,130 @@
-import requests
+import os
 import json
-import subprocess
-from settings.config import TEST_SERVER_HOST
+import requests
+from dotenv import load_dotenv, set_key
+from settings.config import TEST_SERVER_HOST, ENV_FILE
 
-# Define the login URL and login credentials
+# Load environment variables from .env file
+load_dotenv(ENV_FILE)
+
+# Get credentials and SAFE_UUID from .env
+username = os.getenv('USERNAME')
+password = os.getenv('PASSWORD')
+
+# Define the login URL
 host = TEST_SERVER_HOST
 login_url = host+"account/login/"
-username = "arijeet_de@noemail.com"
-password = "#Arijeet@27"
 
 
-def login_and_publish_quiz():
-    # Create a session to persist cookies across requests
-    session = requests.Session()
+def login_instructor(session):
+    """
+    Logs in the instructor by sending a POST request with credentials.
 
-    # Send a GET request to the login page to retrieve any necessary CSRF tokens
+    Args:
+        session (requests.Session): The session object for making HTTP requests.
+
+    Returns:
+        bool: True if login is successful, False otherwise.
+    """
+    # Send a GET request to retrieve the login page (to obtain the CSRF token)
     login_page_response = session.get(login_url)
 
-    # Extract the CSRF token from the response
+    # Extract the CSRF token from the response cookies
     csrf_token = session.cookies.get("csrftoken")
 
-    # Prepare the login data with the CSRF token
+    # Prepare login data with credentials and CSRF token
     login_data = {
         "username": username,
         "password": password,
         "csrfmiddlewaretoken": csrf_token,
     }
 
-    # Perform the login by sending a POST request with the login data
+    # Perform login by sending a POST request with login data
     login_response = session.post(login_url, data=login_data)
 
     # Check if the login was successful
-    if login_response.status_code == 200 :
+    if login_response.status_code == 200:
         print("Login successful!")
+        return True
     else:
         print("Login failed.")
+        return False
 
-    # use the session object to make authenticated requests to the website.
+
+def publish_quiz(session):
+    """
+    Publishes the quiz and retrieves the safe UUID from the response.
+
+    Args:
+        session (requests.Session): The session object for making HTTP requests.
+
+    Returns:
+        str: The safe UUID of the published quiz, or None if publishing fails.
+    """
+    # Get updated CSRF token
     csrf_token = session.cookies.get("csrftoken")
+
+    # Prepare data for publishing the quiz
     publish_data = {
         "csrfmiddlewaretoken": csrf_token,
-        "type":"flexible",
-        "start_time":"T",
-        "end_time":"T",
+        "type": "flexible",
+        "start_time": "T",  # Placeholder value for start time
+        "end_time": "T",    # Placeholder value for end time
     }
-    publish_quiz_url = host+"web_api/quiz/1/publish-quiz/"
-    publish_quiz_response = session.post(publish_quiz_url,data=publish_data)
-    print(publish_quiz_response.text)
-    publish_response=json.loads(publish_quiz_response.text)
-    print(publish_response['safe_uuid'])
-    safe_uuid = publish_response['safe_uuid']
 
-    # yet to write start quiz api
-    csrf_token = session.cookies.get("csrftoken")
-    publish_data = {
-        "csrfmiddlewaretoken": csrf_token,
-    }
-    quiz_id = publish_response['id']
-    print("id",quiz_id)
-    start_quiz_url = host + f"/web_api/quiz/instance/{quiz_id}/start/" 
-    start_quiz_response = session.post(start_quiz_url,data=publish_data)
-    print(start_quiz_response.text)
+    # Define the URL to publish the quiz
+    publish_quiz_url = host + "web_api/quiz/1/publish-quiz/"
+    publish_quiz_response = session.post(publish_quiz_url, data=publish_data)
 
-    return safe_uuid
+    # Parse the response from publishing the quiz
+    publish_response = json.loads(publish_quiz_response.text)
+
+    # Extract the safe UUID from the response
+    safe_uuid = publish_response.get('safe_uuid')
+
+    # Check if the safe UUID was successfully retrieved
+    if safe_uuid:
+        print(f"Quiz published successfully! Safe UUID: {safe_uuid}")
+        return safe_uuid
+    else:
+        print("Quiz publishing failed.")
+        return None
 
 
-def set_test_name(quiz_uuid):
-    command = f"echo {quiz_uuid} | python3 settings/TestName.py"
-    subprocess.run(command,shell=True)
-    print("Initial Script over")
+def save_safe_uuid(safe_uuid):
+    """
+    Saves the safe UUID to the .env file.
 
-if __name__ =="__main__":
-    set_test_name(login_and_publish_quiz())
+    Args:
+        safe_uuid (str): The safe UUID to be saved.
+    """
+    # Use set_key from dotenv to update the .env file with the new safe_uuid
+    set_key(ENV_FILE, "SAFE_UUID", safe_uuid)
+    print(f"Safe UUID saved to {ENV_FILE}.")
+
+
+def initial_setup():
+    """
+    Main function that calls the other functions to perform the entire flow:
+    login, publish the quiz, and save the safe UUID.
+    """
+    # Create a session to persist cookies and tokens across requests
+    session = requests.Session()
+
+    # Step 1: Log in the instructor
+    if not login_instructor(session):
+        print("Exiting program due to login failure.")
+        return
+
+    # Step 2: Publish the quiz and get the safe UUID
+    safe_uuid = publish_quiz(session)
+
+    # Step 3: If safe UUID is successfully retrieved, save it to .env
+    if safe_uuid:
+        save_safe_uuid(safe_uuid)
+    else:
+        print("Exiting program due to failure in publishing the quiz.")
+
+
+if __name__ == "__main__":
+    initial_setup()
