@@ -27,5 +27,4 @@
         "APIName":"7.quiz_submit",
         "searchTerm":"\/api\/quiz\/.*\/submit\/"
     }
-
 ]

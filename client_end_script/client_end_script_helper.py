@@ -47,14 +47,14 @@ def sys_perf_check(test_id,msg="",num_user=0):
 
 def performance_test(num_user,ramp_up,duration,test_id):
     sys_perf_check(test_id,"START")
-    # write_config(test_id,num_user)
+
     rate=ceil(num_user*ramp_up)
     locust_cmd=["locust","-f","./perfcheck.py",\
         "--headless","-u",f"{num_user}","-r",f"{rate}","-t",f"{duration}",\
             "--csv-full-history",f"--csv={test_id}/{num_user}"]
     subprocess.run(locust_cmd)
+
     sys_perf_check(test_id,"END")
-    # subprocess.run(["rm","test.ini"])
 
 
 def command_line_args_apc():
