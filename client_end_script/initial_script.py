@@ -8,7 +8,7 @@ from settings.config import TEST_SERVER_HOST, ENV_FILE
 load_dotenv(ENV_FILE)
 
 # Get credentials and SAFE_UUID from .env
-username = os.getenv('USERNAME')
+username = os.getenv('INSTRUCTOR_USERNAME')
 password = os.getenv('PASSWORD')
 
 # Define the login URL
@@ -53,7 +53,7 @@ def login_instructor(session):
 
 def publish_quiz(session):
     """
-    Publishes the quiz and retrieves the safe UUID from the response.
+    Publishes the quiz and retrieves the safe UUID and quiz ID from the response.
 
     Args:
         session (requests.Session): The session object for making HTTP requests.
@@ -79,16 +79,49 @@ def publish_quiz(session):
     # Parse the response from publishing the quiz
     publish_response = json.loads(publish_quiz_response.text)
 
-    # Extract the safe UUID from the response
+    # Extract the safe UUID and quiz ID from the response
     safe_uuid = publish_response.get('safe_uuid')
+    quiz_id = publish_response.get('id')
 
     # Check if the safe UUID was successfully retrieved
     if safe_uuid:
         print(f"Quiz published successfully! Safe UUID: {safe_uuid}")
-        return safe_uuid
+        return safe_uuid, quiz_id
     else:
         print("Quiz publishing failed.")
         return None
+
+
+def start_quiz(session, quiz_id):
+    """
+    Starts the quiz by sending a POST request with the quiz ID and CSRF token.
+
+    Args:
+        session (requests.Session): The session object for making HTTP requests.
+        quiz_id (str): The ID of the quiz to be started.
+
+    Returns:
+        bool: True if the quiz is successfully started, False otherwise.
+    """
+    # Get the CSRF token from session cookies
+    csrf_token = session.cookies.get("csrftoken")
+
+    # Prepare the data to start the quiz
+    start_quiz_data = {
+        "csrfmiddlewaretoken": csrf_token,
+    }
+
+    # Define the URL for starting the quiz (based on the quiz ID)
+    start_quiz_url = host + f"/web_api/quiz/instance/{quiz_id}/start/"
+
+    # Send the POST request to start the quiz
+    start_quiz_response = session.post(start_quiz_url, data=start_quiz_data)
+
+    # Check the response status
+    if start_quiz_response.status_code == 200:
+        print(f"Quiz {quiz_id} started successfully!")
+    else:
+        print(f"Failed to start quiz {quiz_id}. Response: {start_quiz_response.text}")
 
 
 def save_safe_uuid(safe_uuid):
@@ -117,13 +150,19 @@ def initial_setup():
         return
 
     # Step 2: Publish the quiz and get the safe UUID
-    safe_uuid = publish_quiz(session)
+    safe_uuid, quiz_id = publish_quiz(session)
 
     # Step 3: If safe UUID is successfully retrieved, save it to .env
     if safe_uuid:
         save_safe_uuid(safe_uuid)
     else:
         print("Exiting program due to failure in publishing the quiz.")
+
+    # Step 4: Start the quiz using the quiz ID
+    if quiz_id:
+        start_quiz(session, quiz_id)
+    else:
+        print("Exiting program due to missing quiz ID.")
 
 
 if __name__ == "__main__":
