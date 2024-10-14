@@ -5,8 +5,8 @@ import subprocess
 # Define the login URL and login credentials
 host = "https://safev2.cse.iitb.ac.in/"
 login_url = host+"account/login/"
-username = "debajyotisaha1998@gmail.com"
-password = "hagu@123"
+username = "arijeet_instructor@noemail.none"
+password = "safe@123sa"
 
 
 def login_and_publish_quiz():
@@ -43,10 +43,11 @@ def login_and_publish_quiz():
         "start_time":"T",
         "end_time":"T",
     }
-    publish_quiz_url = host+"web_api/quiz/19317/publish-quiz/"
+    publish_quiz_url = host+"web_api/quiz/19603/publish-quiz/"
     publish_quiz_response = session.post(publish_quiz_url,data=publish_data)
     print(publish_quiz_response.text)
     publish_response=json.loads(publish_quiz_response.text)
+    print(publish_response)
     print(publish_response['safe_uuid'])
     safe_uuid = publish_response['safe_uuid']
 
