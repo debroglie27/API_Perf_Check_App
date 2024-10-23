@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import datetime
 from locust import HttpUser,SequentialTaskSet,task,constant
 from locust.exception import StopUser
@@ -63,12 +64,16 @@ class PerfCheck(SequentialTaskSet):
             # print(f"quiz_download: {response}")
             pass
 
+        time.sleep(2)
+
     @task
     def quiz_authenticate(self):
         url = "api/quiz/" + self.quiz_id + "/authenticate/"
         with self.client.get(url, name="6.quiz_authenticate", catch_response=True) as response:
             # print(f"quiz_authenticate: {response}")
             pass
+
+            time.sleep(10)
 
     @task
     def quiz_submit(self):
