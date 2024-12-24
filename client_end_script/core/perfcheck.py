@@ -1,6 +1,5 @@
 import os
 import re
-import time
 import datetime
 from locust import HttpUser,SequentialTaskSet,task,constant
 from locust.exception import StopUser
@@ -64,7 +63,7 @@ class PerfCheck(SequentialTaskSet):
             # print(f"quiz_download: {response}")
             pass
 
-        time.sleep(2)
+        # time.sleep(2)
 
     @task
     def quiz_authenticate(self):
@@ -73,7 +72,7 @@ class PerfCheck(SequentialTaskSet):
             # print(f"quiz_authenticate: {response}")
             pass
 
-            time.sleep(10)
+        # time.sleep(10)
 
     @task
     def quiz_submit(self):

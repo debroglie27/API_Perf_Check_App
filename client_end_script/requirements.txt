@@ -1,4 +1,4 @@
-locust==2.31.5
+locust==2.32.4
 matplotlib==3.9.2
 pandas==2.2.2
 Pillow==10.4.0
