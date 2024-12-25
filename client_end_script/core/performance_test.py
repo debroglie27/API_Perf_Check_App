@@ -1,6 +1,5 @@
 import os
 import gevent
-from gevent.event import Event
 import logging
 import requests
 from math import ceil

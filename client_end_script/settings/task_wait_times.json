@@ -1,0 +1,9 @@
+{
+    "login": 1,
+    "course_list": 1,
+    "quiz_list": 1,
+    "quiz_info": 1,
+    "quiz_download": 1,
+    "quiz_authenticate": 1,
+    "quiz_submit": 1
+}
