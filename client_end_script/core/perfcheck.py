@@ -131,12 +131,12 @@ class MySeqTest(HttpUser):
         if self.last_task_name:
             # Default to 1 second if last_task_name not in task_wait_times
             wait = self.task_wait_times.get(self.last_task_name, 1)
-            print(f"\nTask {self.last_task_name} completed. Waiting for {wait} seconds.")
+            # print(f"\nTask {self.last_task_name} completed. Waiting for {wait} seconds.")
 
             return wait
         
         # No last task, so apply default wait time
         default_wait_time = 0
-        print(f"\nNo last task. Default wait time applied of {default_wait_time} seconds.")
+        # print(f"\nNo last task. Default wait time applied of {default_wait_time} seconds.")
 
-        return 0
+        return default_wait_time
