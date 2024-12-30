@@ -1,6 +1,8 @@
+import os
 import json
 
-def write_task_wait_times(delays, output_file="task_wait_times.json"):
+
+def write_task_wait_times(delays):
     """
     Writes the delays into a JSON file with task names as keys.
 
@@ -8,7 +10,6 @@ def write_task_wait_times(delays, output_file="task_wait_times.json"):
         delays (list[int]): List of 7 delays in the order: login, course_list, 
                             quiz_list, quiz_info, quiz_download, 
                             quiz_authenticate, quiz_submit.
-        output_file (str): Name of the JSON file to write. Defaults to 'task_wait_times.json'.
     """
     if len(delays) != 7:
         raise ValueError("Exactly 7 delays must be provided.")
@@ -23,6 +24,9 @@ def write_task_wait_times(delays, output_file="task_wait_times.json"):
         "quiz_authenticate": delays[5],
         "quiz_submit": delays[6],
     }
+
+    current_dir = os.getcwd()
+    output_file = os.path.join(current_dir, "settings", "task_wait_times.json")
     
     # Write the dictionary to the JSON file
     with open(output_file, "w") as f:
