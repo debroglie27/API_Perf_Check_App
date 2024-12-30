@@ -124,7 +124,8 @@ class MySeqTest(HttpUser):
     # Load task-specific wait times from JSON file
     def __init__(self, parent):
         super().__init__(parent)
-        wait_times_filepath = os.path.join("settings", "task_wait_times.json")
+        current_dir = os.getcwd()
+        wait_times_filepath = os.path.join(current_dir, "settings", "task_wait_times.json")
         with open(wait_times_filepath, "r") as f:
             self.task_wait_times = json.load(f)
 
