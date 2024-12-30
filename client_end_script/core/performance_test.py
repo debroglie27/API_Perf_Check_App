@@ -5,8 +5,10 @@ import requests
 from math import ceil
 from locust.env import Environment
 from locust.stats import stats_printer, stats_history, StatsCSVFileWriter
+
 from core.perfcheck import MySeqTest
 from settings.config import TEST_SERVER_HOST
+from settings.shared_resources import all_users_complete
 
 # Set the logging level for Locust
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +24,7 @@ def performance_test(num_user, ramp_up, duration, test_id):
     sys_perf_check(test_id, "START")
 
     # Calculate the user rate
-    rate = ceil(num_user / ramp_up)
+    rate = ceil(num_user * ramp_up)
 
     # Define the directory for CSV output
     csv_output_dir = f"{test_id}"
@@ -58,11 +60,22 @@ def performance_test(num_user, ramp_up, duration, test_id):
     # Set up stats history tracking
     gevent.spawn(stats_history, env.runner)
 
+    # Track all users completion
+    def wait_for_users_to_finish():
+        while True:
+            current_value = all_users_complete.value
+            print(f"Waiting for users. Current semaphore value: {current_value}")
+            if current_value >= num_user:
+                print("All users completed. Stopping Locust.")
+                env.runner.quit()
+                break
+
+            gevent.sleep(1)
+
+    gevent.spawn(wait_for_users_to_finish)
+
     # Start the Locust test with the specified number of users and spawn rate
     env.runner.start(user_count=num_user, spawn_rate=rate)
-
-    # Schedule the test to stop after the specified duration
-    gevent.spawn_later(duration, env.runner.quit)
 
     # Run the test
     env.runner.greenlet.join()

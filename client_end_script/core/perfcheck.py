@@ -2,12 +2,14 @@ import os
 import re
 import json
 import datetime
-from locust import HttpUser,SequentialTaskSet,task,constant
-from locust.exception import StopUser
-from settings.config import TEST_SERVER_HOST, COURSE_CODE, ENV_FILE
-from settings.credentials import USER_CREDENTIALS
-from settings.Answers import answers
 from dotenv import load_dotenv
+from locust.exception import StopUser
+from locust import HttpUser,SequentialTaskSet,task
+
+from settings.Answers import answers
+from settings.credentials import USER_CREDENTIALS
+from settings.shared_resources import all_users_complete
+from settings.config import TEST_SERVER_HOST, COURSE_CODE, ENV_FILE
 
 # Load environment variables from .env file
 load_dotenv(ENV_FILE)
@@ -108,6 +110,8 @@ class PerfCheck(SequentialTaskSet):
 
     @task
     def done(self):
+        print("A User Completed")
+        all_users_complete.release()
         raise StopUser()
 
 
