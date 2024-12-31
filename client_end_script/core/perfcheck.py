@@ -8,8 +8,9 @@ from locust import HttpUser,SequentialTaskSet,task
 
 from settings.Answers import answers
 from settings.credentials import USER_CREDENTIALS
-from settings.shared_resources import all_users_complete
 from settings.config import TEST_SERVER_HOST, COURSE_CODE, ENV_FILE
+
+from utilities.shared_resources import all_users_complete
 
 # Load environment variables from .env file
 load_dotenv(ENV_FILE)

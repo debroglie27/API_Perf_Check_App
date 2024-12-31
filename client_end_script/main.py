@@ -13,16 +13,16 @@ def main():
     try:
         if len(sys.argv) == 1:
             # No command-line arguments provided; launch GUI
-            num_users, ramp_up, duration, delays = launch_gui()
+            num_users, ramp_up, delays = launch_gui()
         else:
             # Extract command-line arguments
-            num_users, ramp_up, duration, delays = command_line_args()
+            num_users, ramp_up, delays = command_line_args()
 
         # Write the task delays to the task_wait_delays.json
         write_task_wait_times(delays)
 
         # Run the test
-        run_test(num_users, ramp_up, duration)
+        run_test(num_users, ramp_up)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

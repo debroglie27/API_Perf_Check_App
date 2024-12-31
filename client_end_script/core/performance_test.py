@@ -8,7 +8,7 @@ from locust.stats import stats_printer, stats_history, StatsCSVFileWriter
 
 from core.perfcheck import MySeqTest
 from settings.config import TEST_SERVER_HOST
-from settings.shared_resources import all_users_complete
+from utilities.shared_resources import all_users_complete
 
 # Set the logging level for Locust
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +19,7 @@ def sys_perf_check(test_id, msg="", num_user=0):
     requests.get(url)
 
 
-def performance_test(num_user, ramp_up, duration, test_id):
+def performance_test(num_user, ramp_up, test_id):
     # Generate the START log in the server
     sys_perf_check(test_id, "START")
 
