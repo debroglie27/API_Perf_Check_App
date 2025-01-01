@@ -16,13 +16,13 @@ from utilities.shared_resources import all_users_complete
 load_dotenv(ENV_FILE)
 
 # Retrieve the saved safe_uuid from the .env file
-safe_uuid = os.getenv('SAFE_UUID')
+quiz_id = os.getenv('SAFE_UUID')
 
 
 class PerfCheck(SequentialTaskSet):
     def __init__(self, parent):
         super().__init__(parent)
-        self.quiz_id = safe_uuid
+        self.quiz_id = quiz_id
 
     def on_start(self):
         """Notify the parent user that a task set has started."""

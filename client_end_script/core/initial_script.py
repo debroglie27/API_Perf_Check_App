@@ -7,13 +7,9 @@ from settings.config import TEST_SERVER_HOST, ENV_FILE
 # Load environment variables from .env file
 load_dotenv(ENV_FILE)
 
-# Get credentials and SAFE_UUID from .env
+# Get instructor credentials from .env
 username = os.getenv('INSTRUCTOR_USERNAME')
 password = os.getenv('PASSWORD')
-
-# Define the login URL
-host = TEST_SERVER_HOST
-login_url = host+"account/login/"
 
 
 def login_instructor(session):
@@ -26,6 +22,9 @@ def login_instructor(session):
     Returns:
         bool: True if login is successful, False otherwise.
     """
+    # Define the login URL
+    login_url = TEST_SERVER_HOST + "account/login/"
+
     # Send a GET request to retrieve the login page (to obtain the CSRF token)
     login_page_response = session.get(login_url)
 
@@ -73,7 +72,7 @@ def publish_quiz(session):
     }
 
     # Define the URL to publish the quiz
-    publish_quiz_url = host + "web_api/quiz/1/publish-quiz/"
+    publish_quiz_url = TEST_SERVER_HOST + "web_api/quiz/1/publish-quiz/"
     publish_quiz_response = session.post(publish_quiz_url, data=publish_data)
 
     # Parse the response from publishing the quiz
@@ -112,7 +111,7 @@ def start_quiz(session, quiz_id):
     }
 
     # Define the URL for starting the quiz (based on the quiz ID)
-    start_quiz_url = host + f"/web_api/quiz/instance/{quiz_id}/start/"
+    start_quiz_url = TEST_SERVER_HOST + f"/web_api/quiz/instance/{quiz_id}/start/"
 
     # Send the POST request to start the quiz
     start_quiz_response = session.post(start_quiz_url, data=start_quiz_data)
@@ -147,7 +146,7 @@ def initial_setup():
     # Step 1: Log in the instructor
     if not login_instructor(session):
         print("Exiting program due to login failure.")
-        return
+        exit(1)
 
     # Step 2: Publish the quiz and get the safe UUID
     safe_uuid, quiz_id = publish_quiz(session)
@@ -157,12 +156,14 @@ def initial_setup():
         save_safe_uuid(safe_uuid)
     else:
         print("Exiting program due to failure in publishing the quiz.")
+        exit(1)
 
     # Step 4: Start the quiz using the quiz ID
     if quiz_id:
         start_quiz(session, quiz_id)
     else:
         print("Exiting program due to missing quiz ID.")
+        exit(1)
 
 
 if __name__ == "__main__":
