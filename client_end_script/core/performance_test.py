@@ -70,7 +70,7 @@ def performance_test(num_user, ramp_up, test_id):
                 env.runner.quit()
                 break
 
-            gevent.sleep(1)
+            gevent.sleep(2)
 
     gevent.spawn(wait_for_users_to_finish)
 
