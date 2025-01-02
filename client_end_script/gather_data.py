@@ -4,14 +4,15 @@ import glob
 import pandas as pd
 
 # Define patterns for both formats
-response_time_pattern = re.compile(r'\*\*\*(\d+\.\d+)\*\*\*')
+response_time_pattern_uwsgi = re.compile(r'\*\*\*(\d+)\*\*\*')
+response_time_pattern_nginx = re.compile(r'\*\*\*(\d+\.\d+)\*\*\*')
 
 def average_response_time_uwsgi(file_path):
     """Parse uwsgi logs and calculate the average response time in milliseconds."""
     response_times = []
     with open(file_path, 'r') as file:
         for line in file:
-            match = response_time_pattern.search(line)
+            match = response_time_pattern_uwsgi.search(line)
             if match:
                 response_times.append(int(match.group(1)))
     if response_times:
@@ -24,7 +25,7 @@ def average_response_time_nginx(file_path):
     response_times = []
     with open(file_path, 'r') as file:
         for line in file:
-            match = response_time_pattern.search(line)
+            match = response_time_pattern_nginx.search(line)
             if match:
                 response_time_sec = float(match.group(1))  # Get time in seconds
                 response_times.append(int(response_time_sec * 1000))  # Convert to milliseconds
@@ -139,7 +140,7 @@ def process_and_save_results(folders, prefix, output_filename):
 def main():
     # Find all "2024" folders in the current directory
     base_path = os.getcwd()  # Current working directory
-    folders = glob.glob(os.path.join(base_path, "2024*"))
+    folders = glob.glob(os.path.join(base_path, "2025*"))
 
     # Process and save results for "uwsgi"
     process_and_save_results(folders, "uwsgi", 'uwsgi_response_times_summary.csv')

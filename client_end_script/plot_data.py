@@ -11,7 +11,7 @@ def plot_response_times(csv_file, title, output_file):
     # Plot each API response time against the number of users
     plt.figure(figsize=(10, 6))
     
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         plt.plot(num_users, row[1:], marker='o', label=row['API_name'])
     
     plt.title(title)
