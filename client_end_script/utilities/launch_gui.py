@@ -1,5 +1,5 @@
 import sys
-from tkinter import Tk, Label, Entry, Button, Frame
+from tkinter import Tk, Label, Entry, Button, Frame, messagebox
 
 
 def center_window(root, width, height):
@@ -22,6 +22,10 @@ def launch_gui():
             user_inputs["num_users"] = int(num_users_entry.get())
             user_inputs["ramp_up"] = float(ramp_up_entry.get())
 
+            # Validate that ramp_up is between 0 and 1 (inclusive)
+            if not (0 <= user_inputs["ramp_up"] <= 1):
+                raise ValueError("Ramp up rate must be between 0 and 1.")
+
             # Collect delays from the delay entry fields
             user_inputs["delays"] = [
                 int(delay_login_entry.get()),
@@ -33,9 +37,13 @@ def launch_gui():
                 int(delay_quiz_submit_entry.get())
             ]
 
+            # Show Info message in a messagebox
+            messagebox.showinfo("Information", "Performance Test Started")
+
             root.destroy()  # Close the GUI
-        except ValueError:
-            print("Invalid input! Please enter valid integers.")
+        except ValueError as e:
+            # Show error message in a messagebox
+            messagebox.showerror("Input Error", f"Invalid input! {e}")
 
     def on_close():
         print("Application closed by the user.")
