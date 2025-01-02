@@ -32,4 +32,4 @@ def write_task_wait_times(delays):
     with open(output_file, "w") as f:
         json.dump(task_delays, f, indent=4)
     
-    print(f"Task wait times written to {output_file}")
+    print("Task wait times written")
