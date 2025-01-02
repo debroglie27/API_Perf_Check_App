@@ -25,8 +25,10 @@ def login(session, email, password):
     }
 
     try:
-        response = session.post(url, name="1.login", data=data, catch_response=True)
+        response = session.post(url, data=data)
         response.raise_for_status()  # Raise an exception for HTTP errors
+        print("Response Headers:", response.headers)
+        print("Response Body:", response.text)
         csrftoken = response.cookies['csrftoken']
         return csrftoken
     except Exception as e:
@@ -39,7 +41,7 @@ def course_list(session):
     url = TEST_SERVER_HOST + "api/course/"
 
     try:
-        response = session.get(url, name="2.course_list", catch_response=True)
+        response = session.get(url)
         response.raise_for_status()  # Raise an exception for HTTP errors
         return True
     except Exception as e:
@@ -51,7 +53,7 @@ def course_list(session):
 def quiz_list(session):
     url = TEST_SERVER_HOST + "api/quiz/" + COURSE_CODE + "/downloadable-quizzes/"
     try:
-        response = session.get(url, name="3.quiz_list", catch_response=True)
+        response = session.get(url)
         response.raise_for_status()  # Raise an exception for HTTP errors
         return True
     except Exception as e:
@@ -63,7 +65,7 @@ def quiz_list(session):
 def quiz_info(session, quiz_id):
     url = TEST_SERVER_HOST + "api/quiz/" + quiz_id + "/info/"
     try:
-        response = session.get(url, name="4.quiz_info", catch_response=True)
+        response = session.get(url)
         quiz_keystate = re.search(r"\"keystate\":(.*?)(,|})", response.text)
         quiz_keystate = quiz_keystate.group(1)[1:-1]
         return quiz_keystate
