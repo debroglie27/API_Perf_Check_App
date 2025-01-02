@@ -111,7 +111,7 @@ class PerfCheck(SequentialTaskSet):
 
     @task
     def done(self):
-        print("A User Completed")
+        # print("A User Completed")
         all_users_complete.release()
         raise StopUser()
 
