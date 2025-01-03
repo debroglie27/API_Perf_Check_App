@@ -54,13 +54,13 @@ class PerfCheck(SequentialTaskSet):
         url = "api/course/"
         with self.client.get(url, name="2.course_list", catch_response=True) as response:
             # print(f"course_list: {response}")
-            self.code = COURSE_CODE
+            pass
 
     @task
     def quiz_list(self):
         self.update_last_task("quiz_list")
 
-        url = "api/quiz/" + self.code + "/downloadable-quizzes/"
+        url = "api/quiz/" + COURSE_CODE + "/downloadable-quizzes/"
         with self.client.get(url, name="3.quiz_list", catch_response=True) as response:
             # print(f"quiz_list: {response}")
             pass
@@ -72,9 +72,8 @@ class PerfCheck(SequentialTaskSet):
         url = "api/quiz/" + self.quiz_id + "/info/"
         with self.client.get(url, name="4.quiz_info", catch_response=True) as response:
             # print(f"quiz_info: {response}")
-            quiz_keystate = re.search(r"\"keystate\":(.*?)(,|})", response.text)
-            self.quiz_keystate = quiz_keystate.group(1)[1:-1]
-            # print(f"quiz_keystate: {self.quiz_keystate}")
+            response_json = response.json()
+            self.quiz_keystate = response_json.get("keystate", None)
 
     @task
     def quiz_download(self):
