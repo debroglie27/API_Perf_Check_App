@@ -55,8 +55,8 @@ def launch_gui():
     root.configure(bg="#a0dafa")
 
     # Set desired window dimensions
-    window_width = 650
-    window_height = 690
+    window_width = 620
+    window_height = 675
 
     # Center the window
     center_window(root, window_width, window_height)
@@ -69,44 +69,45 @@ def launch_gui():
 
     input_label_font = ("Arial", 18)
     delay_label_font = ("Arial", 15)
-    header_font = ("Arial", 20)
+    header_font = ("Arial", 22)
     input_entry_font = ("Arial", 18)
     delay_entry_font = ("Arial", 15)
     button_font = ("Arial", 16)
 
     # Frame for Inputs
     inputs_frame = Frame(root, bg="#a0dafa")
-    inputs_frame.grid(row=0, column=0, padx=10, pady=(60, 20), sticky="nsew")
+    inputs_frame.grid(row=0, column=0, padx=10, pady=(55, 20), sticky="nsew")
     inputs_frame.grid_columnconfigure(0, weight=1)
     inputs_frame.grid_columnconfigure(1, weight=1)
 
     # Num Users Label and Entry
     Label(inputs_frame, text="Number of Users:", font=input_label_font, bg="#a0dafa").grid(row=0, column=0, padx=10, pady=(0, 10), sticky="e")
-    num_users_entry = Entry(inputs_frame, font=input_entry_font, borderwidth=0, relief="flat")
+    num_users_entry = Entry(inputs_frame, font=input_entry_font, borderwidth=0, relief="flat", justify="center")
     num_users_entry.grid(row=0, column=1, padx=10, pady=(0, 10), sticky="w")
 
     # Ramp-Up Rate Label and Entry
     Label(inputs_frame, text="Ramp-Up Rate:", font=input_label_font, bg="#a0dafa").grid(row=1, column=0, padx=10, pady=10, sticky="e")
-    ramp_up_entry = Entry(inputs_frame, font=input_entry_font, borderwidth=0, relief="flat")
+    ramp_up_entry = Entry(inputs_frame, font=input_entry_font, borderwidth=0, relief="flat", justify="center")
     ramp_up_entry.grid(row=1, column=1, padx=10, pady=10, sticky="w")
 
     # Frame for Delays
     delays_frame = Frame(root, bg="#a0dafa")
-    delays_frame.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
+    delays_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
     delays_frame.grid_columnconfigure(0, weight=1)
     delays_frame.grid_columnconfigure(1, weight=1)
-    delays_frame.grid_columnconfigure(2, weight=1)
+
+    Label(delays_frame, text="Delays", font=header_font, bg="#a0dafa").grid(row=0, column=0, padx=10, pady=(0, 15), columnspan=2)
 
     delay_labels = [
-        "Login", "Course List", "Quiz List", "Quiz Info",
-        "Quiz Download", "Quiz Authenticate", "Quiz Submit"
+        "Login:", "Course List:", "Quiz List:", "Quiz Info:",
+        "Quiz Download:", "Quiz Authenticate:", "Quiz Submit:"
     ]
     delay_entries = []
 
     for i, label_text in enumerate(delay_labels):
-        Label(delays_frame, text=label_text, font=delay_label_font, bg="#a0dafa").grid(row=i, column=0, padx=10, pady=8, sticky="e")
+        Label(delays_frame, text=label_text, font=delay_label_font, bg="#a0dafa").grid(row=i+1, column=0, padx=10, pady=8, sticky="e")
         entry = Entry(delays_frame, font=delay_entry_font, borderwidth=0, relief="flat", justify="center")
-        entry.grid(row=i, column=1, padx=10, pady=8)
+        entry.grid(row=i+1, column=1, padx=10, pady=8, sticky="w")
         entry.insert(0, "1")  # Default value
         delay_entries.append(entry)
 
