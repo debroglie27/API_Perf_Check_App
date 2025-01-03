@@ -6,7 +6,7 @@ from math import ceil
 from locust.env import Environment
 from locust.stats import stats_printer, stats_history, StatsCSVFileWriter
 
-from core.perfcheck import MySeqTest
+from core.locust_script import MySeqTest
 from settings.config import TEST_SERVER_HOST
 from utilities.shared_resources import all_users_complete
 
