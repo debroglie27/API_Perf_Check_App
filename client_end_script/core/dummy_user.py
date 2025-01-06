@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 from dotenv import load_dotenv
 
@@ -88,12 +89,16 @@ def dummy_user():
 
     print("Dummy Student: Login Successful")
 
+    time.sleep(1)
+
     # Step 2: Get course list
     if not course_list(session):
         print("Dummy Student: Course List Failed!!!")
         exit(1)
 
     print("Dummy Student: Course List Successful")
+
+    time.sleep(1)
 
     # Step 3: Get quiz list
     if not quiz_list(session):
@@ -102,9 +107,13 @@ def dummy_user():
 
     print("Dummy Student: Quiz List Successful")
 
+    time.sleep(1)
+
     # Step 4: Get quiz info
     if not quiz_info(session, quiz_id):
         print("Dummy Student: Quiz Info Failed!!!")
         exit(1)
 
     print("Dummy Student: Quiz Info Successful")
+
+    time.sleep(1)
