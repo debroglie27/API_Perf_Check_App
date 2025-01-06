@@ -2,7 +2,7 @@ API_name,RespTime_10(ms),RespTime_20(ms),RespTime_30(ms),RespTime_40(ms),RespTim
 login,320,461,590,558,586,539
 course_list,25,52,63,61,60,145
 quiz_list,68,114,130,123,103,86
-quiz_info,1087,1875,2431,2962,3143,3223
+quiz_info,1087,1875,2531,2962,3143,3223
 quiz_download,26,42,50,53,54,51
 quiz_authenticate,55,86,86,96,96,146
 quiz_submit,31,54,50,50,47,56
