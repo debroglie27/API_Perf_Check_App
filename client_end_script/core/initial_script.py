@@ -43,10 +43,10 @@ def login_instructor(session):
 
     # Check if the login was successful
     if login_response.status_code == 200:
-        print("Login successful!")
+        print("Instructor Login Successful!")
         return True
     else:
-        print("Login failed.")
+        print("Instructor Login Failed!")
         return False
 
 
