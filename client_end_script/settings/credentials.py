@@ -1,4 +1,4 @@
-DUMMY_STUDENT_CREDENTIAL=("arijeet_student@noemail.com", "#Student@123lo")
+INITIAL_STUDENT_CREDENTIAL=("arijeet_student@noemail.com", "#Student@123lo")
 
 USER_CREDENTIALS=[
 ("safestudent1000@iitb.ac.in", "cSCtg3pXlo"),

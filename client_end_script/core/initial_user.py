@@ -3,7 +3,7 @@ import time
 import requests
 from dotenv import load_dotenv
 
-from settings.credentials import DUMMY_STUDENT_CREDENTIAL
+from settings.credentials import INITIAL_STUDENT_CREDENTIAL
 from settings.config import COURSE_CODE, TEST_SERVER_HOST, ENV_FILE
 
 # Load environment variables from .env file
@@ -13,7 +13,7 @@ load_dotenv(ENV_FILE)
 quiz_id = os.getenv('SAFE_UUID')
 
 # Unpacking the DUMMY_STUDENT_CREDENTIAL Tuple
-email, password = DUMMY_STUDENT_CREDENTIAL
+email, password = INITIAL_STUDENT_CREDENTIAL
 
 
 def login(session, email, password):
