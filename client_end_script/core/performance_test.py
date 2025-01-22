@@ -10,6 +10,7 @@ from core.locust_script import MySeqTest
 from settings.config import TEST_SERVER_HOST
 from utilities.shared_resources import all_users_complete
 from utilities.write_locust_stats import write_locust_stats
+from utilities.create_directory import create_directory
 
 # Set the logging level for Locust
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +52,7 @@ def performance_test(num_user, ramp_up, test_id):
 
     # Define the directory for CSV output of locust stats
     csv_output_dir = f"{test_id}"
-    os.makedirs(csv_output_dir, exist_ok=True)
+    create_directory(csv_output_dir)
 
     stats_csv_path = os.path.join(csv_output_dir, f"{num_user}_stats.csv")
 

@@ -79,7 +79,7 @@ def quiz_info(session, quiz_id):
     return False
 
 
-def dummy_user():
+def initial_user():
     session = requests.Session()
 
     # Step 1: Login
