@@ -43,7 +43,7 @@ def on_close(root):
     sys.exit()
 
 
-def launch_gui():
+def get_args_gui():
     # Store inputs in a dictionary for easy retrieval
     user_inputs = {"num_users": None, "ramp_up": None, "delays": [1, 1, 1, 1, 1, 1, 1]}
 

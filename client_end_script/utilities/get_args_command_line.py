@@ -12,7 +12,7 @@ def validate_ramp_up_rate(value):
         raise argparse.ArgumentTypeError("Ramp up rate must be a valid number.")
 
 
-def command_line_args():
+def get_args_command_line():
     parser = argparse.ArgumentParser(prog='./client_end_module.py', description='To monitor performance of APIs over time')
     parser.add_argument('-l',metavar="NUM_OF_USERS",required=True,type=int,help='The number of users to simulate during the performance test')
     parser.add_argument('-r',metavar="RAMP_UP_RATE",default=0.1,type=validate_ramp_up_rate,help='The ramp up rate for performance test (between 0 and 1)')
