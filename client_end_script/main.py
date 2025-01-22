@@ -18,7 +18,7 @@ def main():
             # Extract command-line arguments
             num_users, ramp_up, delays = get_args_command_line()
 
-        # Write the task delays to the task_wait_delays.json
+        # Write the task delays to a json file
         write_task_wait_times(delays)
 
         # Run the test
