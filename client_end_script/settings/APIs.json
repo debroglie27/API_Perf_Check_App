@@ -1,30 +1,37 @@
 [
     {
-        "APIName":"1.login",
+        "id":"1",
+        "name":"login",
         "searchTerm":"\/api\/account\/login"
     },
     {
-        "APIName":"2.course_list",
+        "id":"2",
+        "name":"course_list",
         "searchTerm":"\/api\/course"
     },
     {
-        "APIName":"3.quiz_list",
+        "id":"3",
+        "name":"quiz_list",
         "searchTerm":"\/api\/quiz\/.*\/downloadable-quizzes\/"
     },
     {
-        "APIName":"4.quiz_info",
+        "id":"4",
+        "name":"quiz_info",
         "searchTerm":"\/api\/quiz\/.*\/info\/"
     },
     {
-        "APIName":"5.quiz_download",
+        "id":"5",
+        "name":"quiz_download",
         "searchTerm":"\/api\/quiz\/.*\/download\/"
     },
     {
-        "APIName":"6.quiz_authenticate",
+        "id":"6",
+        "name":"quiz_authenticate",
         "searchTerm":"\/api\/quiz\/.*\/authenticate\/"
     },
     {
-        "APIName":"7.quiz_submit",
+        "id":"7",
+        "name":"quiz_submit",
         "searchTerm":"\/api\/quiz\/.*\/submit\/"
     }
 ]

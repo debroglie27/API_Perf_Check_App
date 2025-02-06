@@ -1,13 +1,15 @@
 [
     {
-        "componentName":"inner-nginx",
+        "name":"inner-nginx",
         "logPath":"/home/pi/safe_server_v2/logs/inner-nginx/safe-access.log",
-        "timeUnit":"s"
+        "timeUnit":"s",
+        "respTimeRegex":"\\*\\*\\*(\\d+\\.\\d+)\\*\\*\\*"
     },
     {
-        "componentName":"uwsgi",
+        "name":"uwsgi",
         "logPath":"/home/pi/safe_server_v2/logs/uwsgi/uwsgi-daemonize.log",
-        "timeUnit":"ms"
+        "timeUnit":"ms",
+        "respTimeRegex":"\\*\\*\\*(\\d+)\\*\\*\\*"
     }
 ]
 
