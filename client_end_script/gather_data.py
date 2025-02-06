@@ -140,7 +140,7 @@ def process_and_save_results(folders, prefix, output_filename):
 def main():
     # Find all "2024" folders in the current directory
     base_path = os.getcwd()  # Current working directory
-    folders = glob.glob(os.path.join(base_path, "2024*"))
+    folders = glob.glob(os.path.join(base_path, "2025*"))
 
     # Process and save results for "uwsgi"
     process_and_save_results(folders, "uwsgi", 'uwsgi_response_times_summary.csv')
