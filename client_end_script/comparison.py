@@ -2,15 +2,16 @@ import os
 import csv
 import json
 import numpy as np
-# from colorama import Fore, Style
+from columnar import columnar
+from colorama import Fore, Style
 import scipy.stats as stats
 from scipy.stats import mannwhitneyu
 
 
-def read_from_csv(test_id, prefix, api_name):
+def read_from_csv(test_id, comparison_folder, prefix, api_name):
     base_path = os.getcwd()
     csv_filename = prefix + "_response_times.csv"
-    csv_file_path = os.path.join(base_path, test_id, csv_filename)
+    csv_file_path = os.path.join(base_path, comparison_folder, test_id, csv_filename)
 
     response_times = []
 
@@ -54,7 +55,7 @@ def t_test_result(curr_lst,old_lst):
     if len(curr_lst) == 0:
         raise ValueError("Response time for current test not generated")
     t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
-    print("the t value is "+str(t_stats)+"the p value is "+str(p_val))
+    # print("the t value is "+str(t_stats)+"the p value is "+str(p_val))
     alpha = 0.01
     if p_val >=alpha:
         return "4"
@@ -78,7 +79,7 @@ def man_u_test_result(curr_lst,old_lst):
     statistic, p_val = mannwhitneyu(old_lst, curr_lst)
     hodges_lehmann_estimate = np.median([y - x for x in old_lst for y in curr_lst])
     # t_stats,p_val = stats.ttest_ind(old_lst,curr_lst)
-    print("the hodges lehmann estimate value is "+str(hodges_lehmann_estimate)+"the p value is "+str(p_val))
+    # print("the hodges lehmann estimate value is "+str(hodges_lehmann_estimate)+"the p value is "+str(p_val))
     alpha = 0.01
     if p_val >=alpha:
         return "4"
@@ -87,15 +88,12 @@ def man_u_test_result(curr_lst,old_lst):
     return "2"
 
 
-def generate_t_test_results(test_id1, test_id2):
+def generate_t_test_results(test_id1, test_id2, comparison_folder_1, comparison_folder_2, api_info, component):
     res = []
-    
-    with open('settings/APIs.json','r') as f:
-        api_info = json.load(f)
 
     for api in api_info:
-        api_rt_lst_1 = read_from_csv(test_id1, "inner-nginx", api['name']) # response time
-        api_rt_lst_2 = read_from_csv(test_id2, "inner-nginx", api['name']) # response time
+        api_rt_lst_1 = read_from_csv(test_id1, comparison_folder_1, component, api['name']) # response time
+        api_rt_lst_2 = read_from_csv(test_id2, comparison_folder_2, component, api['name']) # response time
 
         normal_1 = normality_test(api_rt_lst_1)
         normal_2 = normality_test(api_rt_lst_2)
@@ -104,15 +102,56 @@ def generate_t_test_results(test_id1, test_id2):
         else:
             t_res = man_u_test_result(api_rt_lst_1, api_rt_lst_2)
 
-        res.append([api['name'], str(t_res)])
+        res.append(str(t_res))
     
     return res
 
 
+def get_test_ids_list(comparison_folder, prefix):
+    base_dir = os.getcwd()
+    folder_path = os.path.join(base_dir, comparison_folder)
+    test_ids_list = sorted([f for f in os.listdir(folder_path) if f.startswith(prefix) and os.path.isdir(f"{folder_path}/{f}")])
+
+    return test_ids_list
+
+
+def convert_to_symbol(val):
+    if val == "1":
+        return f"{Fore.LIGHTBLACK_EX}{Style.BRIGHT}.{Style.RESET_ALL}"
+    elif val == "2":
+        return f"{Fore.RED}{Style.BRIGHT}-{Style.RESET_ALL}"
+    elif val == "3":
+        return f"{Fore.GREEN}{Style.BRIGHT}+{Style.RESET_ALL}"
+    elif val == "4":
+        return f"{Fore.LIGHTBLACK_EX}{Style.BRIGHT}={Style.RESET_ALL}"
+
+
+def get_comparison_results(comparison_folder_1, comparison_folder_2, num_users, component, prefix):
+    test_ids_list_1 = get_test_ids_list(comparison_folder_1, prefix)
+    test_ids_list_2 = get_test_ids_list(comparison_folder_2, prefix)
+
+    headers = ["API_Name"] + [f"User_{num}" for num in num_users]
+
+    with open('settings/APIs.json','r') as f:
+        api_info = json.load(f)
+
+    data = [[api['name']] for api in api_info]
+
+    for (test_id_1, test_id_2) in zip(test_ids_list_1, test_ids_list_2):
+        results = generate_t_test_results(test_id_1, test_id_2, comparison_folder_1, comparison_folder_2, api_info, component)
+        for row_idx, value in enumerate(results):
+            data[row_idx].append(convert_to_symbol(value))
+
+    return headers, data
+
+
 if __name__ == "__main__":
-    test_id_1 = "2025-01-13_19-40-16"
-    test_id_2 = "2025-01-02_11-12-59"
+    prefix = "2025"
+    component = "inner-nginx"
+    comparison_folder_1 = "Raspi5_Full_Optimized"
+    comparison_folder_2 = "Raspi5_Non_Optimized"
+    num_users = [10, 20, 30, 40, 50, 60]
 
-    result = generate_t_test_results(test_id_1,test_id_2)
+    headers, data = get_comparison_results(comparison_folder_1, comparison_folder_2, num_users, component, prefix)
 
-    print(result)
+    print(columnar(data, headers, no_borders=True)) 
