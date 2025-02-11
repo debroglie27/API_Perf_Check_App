@@ -114,7 +114,7 @@ def process_and_save_results(folders, prefix, output_filename):
 
 
 def main():
-    # Find all "2024" folders in the current directory
+    # Find all "2025" folders in the current directory
     base_path = os.getcwd()  # Current working directory
     folders = glob.glob(os.path.join(base_path, "2025*"))
 
