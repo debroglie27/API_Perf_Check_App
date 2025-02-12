@@ -74,7 +74,7 @@ def process_and_save_results(folders, prefix, output_filename):
         results = process_folder(folder, prefix)
         if results:
             all_results.append(results)
-            print(f"Processed folder {folder} for {prefix}: {results}")
+            # print(f"Processed folder {folder} for {prefix}: {results}")
 
     # Collect all unique number of users and sort them
     user_counts = sorted({result['Number of Users'] for result in all_results})
