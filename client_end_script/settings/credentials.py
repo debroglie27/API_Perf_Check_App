@@ -1,4 +1,4 @@
-INITIAL_STUDENT_CREDENTIAL=("arijeet_student@noemail.com", "safe@123sa")
+INITIAL_STUDENT_CREDENTIAL=("arijeet_student@noemail.none", "safe@123sa")
 
 USER_CREDENTIALS=[
     ('safestudent1001@noemail.none', 'CFNNZZPesa'), 

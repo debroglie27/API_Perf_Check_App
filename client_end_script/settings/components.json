@@ -9,7 +9,7 @@
         "name":"uwsgi",
         "logPath":"/home/safev2admin/kashmira/safe_server_v2/logs/uwsgi/uwsgi-daemonize.log",
         "timeUnit":"ms",
-        "respTimeRegex":"\\*\\*\\*(\\d+)\\*\\*\\*"
+        "respTimeRegex":"generated \\d+ bytes in (\\d+) msecs"
     }
 ]
 

@@ -1,4 +1,4 @@
-IP_ADDRESS="192.168.238.172"
+IP_ADDRESS="10.129.7.11"
 LOG_HOST=IP_ADDRESS
 TEST_SERVER_HOST="https://safev2.cse.iitb.ac.in/"
 
