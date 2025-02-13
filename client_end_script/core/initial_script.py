@@ -1,15 +1,17 @@
-import os
+# import os
 import json
 import requests
 from dotenv import load_dotenv, set_key
 from settings.config import TEST_SERVER_HOST, ENV_FILE
 
 # Load environment variables from .env file
-load_dotenv(ENV_FILE)
+# load_dotenv(ENV_FILE)
 
 # Get instructor credentials from .env
-username = os.getenv('INSTRUCTOR_USERNAME')
-password = os.getenv('PASSWORD')
+# username = os.getenv('INSTRUCTOR_USERNAME')
+# password = os.getenv('PASSWORD')
+username = "arijeet_instructor@noemail.none"
+password = "safe@123sa"
 
 
 def login_instructor(session):
