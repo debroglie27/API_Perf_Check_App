@@ -74,7 +74,7 @@ def publish_quiz(session):
     }
 
     # Define the URL to publish the quiz
-    publish_quiz_url = TEST_SERVER_HOST + "web_api/quiz/1/publish-quiz/"
+    publish_quiz_url = TEST_SERVER_HOST + "web_api/quiz/19603/publish-quiz/"
     publish_quiz_response = session.post(publish_quiz_url, data=publish_data)
 
     # Parse the response from publishing the quiz
