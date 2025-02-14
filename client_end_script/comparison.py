@@ -148,9 +148,9 @@ def get_comparison_results(comparison_folder_1, comparison_folder_2, num_users, 
 if __name__ == "__main__":
     prefix = "2025"
     component = "inner-nginx"
-    comparison_folder_1 = "Raspi5_Full_Optimized"
-    comparison_folder_2 = "Raspi5_Non_Optimized"
-    num_users = [10, 20, 30, 40, 50, 60]
+    comparison_folder_1 = "safev2_dev_3.9"
+    comparison_folder_2 = "safev2_dev_3.6"
+    num_users = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
     headers, data = get_comparison_results(comparison_folder_1, comparison_folder_2, num_users, component, prefix)
 
