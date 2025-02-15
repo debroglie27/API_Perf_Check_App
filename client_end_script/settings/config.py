@@ -8,4 +8,5 @@ SEARCH_LINES_LIMIT=200000
 
 COURSE_CODE="CS404"
 
-ENV_FILE="settings/.env"
+INSTRUCTOR_USERNAME = "arijeet_de@noemail.com"
+INSTRUCTOR_PASSWORD = "#Arijeet@27"
