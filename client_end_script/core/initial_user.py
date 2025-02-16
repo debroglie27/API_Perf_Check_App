@@ -59,7 +59,7 @@ def quiz_info(session, quiz_id):
         response.raise_for_status()  # Raise an exception for HTTP errors
         # Parse the response text as JSON
         response_json = response.json()
-        print("\nThe quiz Info Response: ", response_json)
+        # print("\nThe quiz Info Response: ", response_json)
         # Extract the keystate
         quiz_keystate = response_json.get("keystate", False)
 
