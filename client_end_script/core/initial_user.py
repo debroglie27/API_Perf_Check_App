@@ -1,19 +1,9 @@
 import os
 import time
 import requests
-from dotenv import load_dotenv
 
 from settings.credentials import INITIAL_STUDENT_CREDENTIAL
-from settings.config import COURSE_CODE, TEST_SERVER_HOST, ENV_FILE
-
-# Load environment variables from .env file
-load_dotenv(ENV_FILE)
-
-# Retrieve the saved safe_uuid from the .env file
-quiz_id = os.getenv('SAFE_UUID')
-
-# Unpacking the DUMMY_STUDENT_CREDENTIAL Tuple
-email, password = INITIAL_STUDENT_CREDENTIAL
+from settings.config import COURSE_CODE, TEST_SERVER_HOST
 
 
 def login(session, email, password):
@@ -82,6 +72,9 @@ def quiz_info(session, quiz_id):
 def initial_user():
     session = requests.Session()
 
+    # Unpacking the INITIAL STUDENT CREDENTIAL Tuple
+    email, password = INITIAL_STUDENT_CREDENTIAL
+
     # Step 1: Login
     if not login(session, email, password):
         print("Initial Student: Login Request Failed!!!")
@@ -108,6 +101,9 @@ def initial_user():
     print("Initial Student: Quiz List Successful")
 
     time.sleep(1)
+
+    # Retrieve the saved safe_uuid environment variable
+    quiz_id = os.getenv('SAFE_UUID')
 
     # Step 4: Get quiz info
     if not quiz_info(session, quiz_id):

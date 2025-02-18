@@ -1,17 +1,7 @@
-# import os
+import os
 import json
 import requests
-from dotenv import load_dotenv, set_key
-from settings.config import TEST_SERVER_HOST, ENV_FILE
-
-# Load environment variables from .env file
-# load_dotenv(ENV_FILE)
-
-# Get instructor credentials from .env
-# username = os.getenv('INSTRUCTOR_USERNAME')
-# password = os.getenv('PASSWORD')
-username = "arijeet_instructor@noemail.none"
-password = "safe@123sa"
+from settings.config import TEST_SERVER_HOST, INSTRUCTOR_USERNAME, INSTRUCTOR_PASSWORD
 
 
 def login_instructor(session):
@@ -35,8 +25,8 @@ def login_instructor(session):
 
     # Prepare login data with credentials and CSRF token
     login_data = {
-        "username": username,
-        "password": password,
+        "username": INSTRUCTOR_USERNAME,
+        "password": INSTRUCTOR_PASSWORD,
         "csrfmiddlewaretoken": csrf_token,
     }
 
@@ -80,17 +70,12 @@ def publish_quiz(session):
     # Parse the response from publishing the quiz
     publish_response = json.loads(publish_quiz_response.text)
 
-    # Extract the safe UUID and quiz ID from the response
+    # Extract the safe UUID, quiz ID and qqc URL from the response
     safe_uuid = publish_response.get('safe_uuid')
     quiz_id = publish_response.get('id')
+    qqc_url = publish_response.get('qqc_url')
 
-    # Check if the safe UUID was successfully retrieved
-    if safe_uuid:
-        print(f"Quiz published successfully! Safe UUID: {safe_uuid}")
-        return safe_uuid, quiz_id
-    else:
-        print("Quiz publishing failed.")
-        return None
+    return safe_uuid, quiz_id, qqc_url
 
 
 def start_quiz(session, quiz_id):
@@ -125,16 +110,19 @@ def start_quiz(session, quiz_id):
         print(f"Failed to start quiz {quiz_id}. Response: {start_quiz_response.text}")
 
 
-def save_safe_uuid(safe_uuid):
+def save_values(safe_uuid, qqc_url):
     """
     Saves the safe UUID to the .env file.
 
     Args:
         safe_uuid (str): The safe UUID to be saved.
     """
-    # Use set_key from dotenv to update the .env file with the new safe_uuid
-    set_key(ENV_FILE, "SAFE_UUID", safe_uuid)
-    print(f"Safe UUID saved to {ENV_FILE}.")
+    # Save these as environment variables
+    os.environ["SAFE_UUID"] = safe_uuid
+    os.environ["QQC_URL"] = qqc_url
+
+    print("Safe UUID saved as environment variable.")
+    print("QQC URL saved as environment variable.")
 
 
 def initial_setup():
@@ -151,11 +139,11 @@ def initial_setup():
         exit(1)
 
     # Step 2: Publish the quiz and get the safe UUID
-    safe_uuid, quiz_id = publish_quiz(session)
+    safe_uuid, quiz_id, qqc_url = publish_quiz(session)
 
-    # Step 3: If safe UUID is successfully retrieved, save it to .env
-    if safe_uuid:
-        save_safe_uuid(safe_uuid)
+    # Step 3: If safe UUID and qqc URL is successfully retrieved, save it
+    if safe_uuid and quiz_id and qqc_url:
+        save_values(safe_uuid, qqc_url)
     else:
         print("Exiting program due to failure in publishing the quiz.")
         exit(1)
