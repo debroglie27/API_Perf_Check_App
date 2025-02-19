@@ -3,7 +3,19 @@ import time
 import requests
 
 from settings.credentials import INITIAL_STUDENT_CREDENTIAL
-from settings.config import COURSE_CODE, TEST_SERVER_HOST
+from settings.config import TEST_SERVER_HOST
+
+
+def qqc_url(session):
+    url = os.getenv('QQC_URL')
+    try:
+        response = session.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        return True
+    except Exception as e:
+        print(f"Error during quiz_info: {e}")
+
+    return False
 
 
 def login(session, email, password):
@@ -12,6 +24,7 @@ def login(session, email, password):
     data = {
         "email_id": email,
         "passcode": password,
+        "web": True,
     }
 
     try:
@@ -24,31 +37,6 @@ def login(session, email, password):
     except Exception as e:
         print(f"Error during login: {e}")
         
-    return False
-
-
-def course_list(session):
-    url = TEST_SERVER_HOST + "api/course/"
-
-    try:
-        response = session.get(url)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        return True
-    except Exception as e:
-        print(f"Error during course_list: {e}")
-
-    return False
-
-
-def quiz_list(session):
-    url = TEST_SERVER_HOST + "api/quiz/" + COURSE_CODE + "/downloadable-quizzes/"
-    try:
-        response = session.get(url)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        return True
-    except Exception as e:
-        print(f"Error during quiz_list: {e}")
-
     return False
 
 
@@ -72,10 +60,17 @@ def quiz_info(session, quiz_id):
 def initial_user():
     session = requests.Session()
 
+    # Step 1: qqc_url
+    if not qqc_url(session, email, password):
+        print("Initial Student: qqc_url Request Failed!!!")
+        exit(1)
+
+    print("Initial Student: qqc_url Successful")
+
     # Unpacking the INITIAL STUDENT CREDENTIAL Tuple
     email, password = INITIAL_STUDENT_CREDENTIAL
 
-    # Step 1: Login
+    # Step 2: Login
     if not login(session, email, password):
         print("Initial Student: Login Request Failed!!!")
         exit(1)
@@ -84,28 +79,10 @@ def initial_user():
 
     time.sleep(1)
 
-    # Step 2: Get course list
-    if not course_list(session):
-        print("Initial Student: Course List Failed!!!")
-        exit(1)
-
-    print("Initial Student: Course List Successful")
-
-    time.sleep(1)
-
-    # Step 3: Get quiz list
-    if not quiz_list(session):
-        print("Initial Student: Quiz List Failed!!!")
-        exit(1)
-
-    print("Initial Student: Quiz List Successful")
-
-    time.sleep(1)
-
     # Retrieve the saved safe_uuid environment variable
     quiz_id = os.getenv('SAFE_UUID')
 
-    # Step 4: Get quiz info
+    # Step 3: Get quiz info
     if not quiz_info(session, quiz_id):
         print("Initial Student: Quiz Info Failed!!!")
         exit(1)

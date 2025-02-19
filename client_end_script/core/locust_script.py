@@ -6,7 +6,7 @@ from locust import HttpUser,SequentialTaskSet,task
 
 from settings.Answers import answers
 from settings.credentials import USER_CREDENTIALS
-from settings.config import TEST_SERVER_HOST, COURSE_CODE
+from settings.config import TEST_SERVER_HOST
 
 from utilities.shared_resources import all_users_complete
 
@@ -15,8 +15,10 @@ class PerfCheck(SequentialTaskSet):
     def __init__(self, parent):
         super().__init__(parent)
 
-        # Retrieve the saved safe_uuid from the .env file
+        # Retrieved the saved safe_uuid environment variable
         self.quiz_id = os.getenv('SAFE_UUID')
+        # Retrieved the saved qqc_url environment variable
+        self.qqc_url = os.getenv('QQC_URL')
 
     def on_start(self):
         """Notify the parent user that a task set has started."""
@@ -25,6 +27,15 @@ class PerfCheck(SequentialTaskSet):
     def update_last_task(self, task_name):
         """Helper method to update the last task name."""
         self.user.last_task_name = task_name
+
+    @task
+    def qqc_url(self):
+        self.update_last_task("qqc_url")
+
+        url = self.qqc_url
+        with self.client.get(url, name="1.qqc_url", catch_response=True) as response:
+            # print(f"quiz_info: {response}")
+            pass
 
     @task
     def login(self):
@@ -36,54 +47,28 @@ class PerfCheck(SequentialTaskSet):
         data = {
             "email_id": self.email,
             "passcode": self.password,
+            "web": True,
         }
-        with self.client.post(url, name="1.login", data=data, catch_response=True) as response:
+        with self.client.post(url, name="2.login", data=data, catch_response=True) as response:
             # print(f"login: {response}")
             self.csrftoken = response.cookies['csrftoken']
-
-    @task
-    def course_list(self):
-        self.update_last_task("course_list")
-
-        url = "api/course/"
-        with self.client.get(url, name="2.course_list", catch_response=True) as response:
-            # print(f"course_list: {response}")
-            pass
-
-    @task
-    def quiz_list(self):
-        self.update_last_task("quiz_list")
-
-        url = "api/quiz/" + COURSE_CODE + "/downloadable-quizzes/"
-        with self.client.get(url, name="3.quiz_list", catch_response=True) as response:
-            # print(f"quiz_list: {response}")
-            pass
 
     @task
     def quiz_info(self):
         self.update_last_task("quiz_info")
 
         url = "api/quiz/" + self.quiz_id + "/info/"
-        with self.client.get(url, name="4.quiz_info", catch_response=True) as response:
+        with self.client.get(url, name="3.quiz_info", catch_response=True) as response:
             # print(f"quiz_info: {response}")
             response_json = response.json()
             self.quiz_keystate = response_json.get("keystate", None)
-
-    @task
-    def quiz_download(self):
-        self.update_last_task("quiz_download")
-
-        url = "api/quiz/" + self.quiz_id + "/download/"
-        with self.client.get(url, name="5.quiz_download", catch_response=True) as response:
-            # print(f"quiz_download: {response}")
-            pass
 
     @task
     def quiz_authenticate(self):
         self.update_last_task("quiz_authenticate")
 
         url = "api/quiz/" + self.quiz_id + "/authenticate/"
-        with self.client.get(url, name="6.quiz_authenticate", catch_response=True) as response:
+        with self.client.get(url, name="4.quiz_authenticate", catch_response=True) as response:
             # print(f"quiz_authenticate: {response}")
             pass
 
@@ -97,8 +82,9 @@ class PerfCheck(SequentialTaskSet):
             "quizData": answers,
             "submissionTime": datetime.datetime.now().strftime(datetime_format),
             "seconds_since_mark": "0",
+            "web": True,
         }
-        with self.client.post(url, name="7.quiz_submit", json=data, headers={"X-CSRFToken": self.csrftoken}, catch_response=True) as response:
+        with self.client.post(url, name="5.quiz_submit", json=data, headers={"X-CSRFToken": self.csrftoken}, catch_response=True) as response:
             # print(f"quiz_submit: {response}")
             pass
 
