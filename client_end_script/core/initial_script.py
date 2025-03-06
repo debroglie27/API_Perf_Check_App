@@ -1,17 +1,8 @@
-# import os
+import os
 import json
 import requests
-from dotenv import load_dotenv, set_key
-from settings.config import TEST_SERVER_HOST, ENV_FILE
 
-# Load environment variables from .env file
-# load_dotenv(ENV_FILE)
-
-# Get instructor credentials from .env
-# username = os.getenv('INSTRUCTOR_USERNAME')
-# password = os.getenv('PASSWORD')
-username = "arijeet_instructor@noemail.none"
-password = "safe@123sa"
+from settings.config import TEST_SERVER_HOST, INSTRUCTOR_USERNAME, INSTRUCTOR_PASSWORD
 
 
 def login_instructor(session):
@@ -35,8 +26,8 @@ def login_instructor(session):
 
     # Prepare login data with credentials and CSRF token
     login_data = {
-        "username": username,
-        "password": password,
+        "username": INSTRUCTOR_USERNAME,
+        "password": INSTRUCTOR_PASSWORD,
         "csrfmiddlewaretoken": csrf_token,
     }
 
@@ -132,9 +123,9 @@ def save_safe_uuid(safe_uuid):
     Args:
         safe_uuid (str): The safe UUID to be saved.
     """
-    # Use set_key from dotenv to update the .env file with the new safe_uuid
-    set_key(ENV_FILE, "SAFE_UUID", safe_uuid)
-    print(f"Safe UUID saved to {ENV_FILE}.")
+    # Save SAFE_UUID as an environment variable
+    os.environ["SAFE_UUID"] = safe_uuid
+    print(f"Safe UUID saved as environment variable.")
 
 
 def initial_setup():
